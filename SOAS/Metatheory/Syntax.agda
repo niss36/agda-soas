@@ -1,12 +1,14 @@
+import SOAS.Context
 
 -- Syntax of a second-order language
-module SOAS.Metatheory.Syntax {T : Set} where
+module SOAS.Metatheory.Syntax {T : Set}
+  (open SOAS.Context {T})
+  ([_]_ : Ctx → T → T) where
 
 open import SOAS.Families.Core {T}
 open import SOAS.Families.Build
 
 open import SOAS.Common
-open import SOAS.Context
 open import Categories.Object.Initial
 open import SOAS.Construction.Structure
 open import SOAS.ContextMaps.Inductive
@@ -23,7 +25,7 @@ record Syntax : Set₁ where
   field
     ⅀F    : Functor 𝔽amiliesₛ 𝔽amiliesₛ
     ⅀:CS  : CompatStrengths ⅀F
-    𝕋:Init : (𝔛 : Familyₛ) → Initial (𝕄etaAlgebras ⅀F 𝔛)
+    𝕋:Init : (𝔛 : Familyₛ) → Initial (𝕄etaAlgebras ⅀F 𝔛 [_]_)
     mvarᵢ  : {𝔛 : Familyₛ}{τ : T}{Π Γ : Ctx} (open Initial (𝕋:Init 𝔛))
           → 𝔛 τ Π → Sub (𝐶 ⊥) Π Γ → 𝐶 ⊥ τ Γ
 
