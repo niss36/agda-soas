@@ -2,16 +2,18 @@
 
 open import SOAS.Common
 open import SOAS.Families.Core
+import SOAS.Context
 import SOAS.Metatheory.MetaAlgebra
 
 -- Shorthands for de Bruijn indices
 module SOAS.Syntax.Shorthands {T : Set}
+  (open SOAS.Context {T})
   {⅀F : Functor 𝔽amiliesₛ 𝔽amiliesₛ}
+  ([_]_ : Ctx → T → T)
   (open SOAS.Metatheory.MetaAlgebra ⅀F)
-  {𝒜 : Familyₛ → Familyₛ}(𝒜ᵃ : (𝔛 : Familyₛ) → MetaAlg 𝔛 (𝒜 𝔛))
+  {𝒜 : Familyₛ → Familyₛ}(𝒜ᵃ : (𝔛 : Familyₛ) → MetaAlg 𝔛 [_]_ (𝒜 𝔛))
   where
 
-open import SOAS.Context
 open import SOAS.Families.Build
 open import SOAS.ContextMaps.Inductive
 open import SOAS.Variable
@@ -25,10 +27,10 @@ private
     Γ Δ : Ctx
 
 module _ {𝔛 : Familyₛ} where
-  open MetaAlg 𝔛 (𝒜ᵃ 𝔛)
+  open MetaAlg 𝔛 [_]_ (𝒜ᵃ 𝔛)
 
   -- Refer to variables via de Bruijn numerals: e.g. ` 2 = 𝑣𝑎𝑟 (old (old new))
-  len : Ctx {T} → ℕ
+  len : Ctx → ℕ
   len ∅        =  ℕ.zero
   len (α ∙ Γ)  =  suc (len Γ)
 
