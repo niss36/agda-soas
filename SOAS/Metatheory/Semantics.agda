@@ -4,15 +4,17 @@ open import SOAS.Families.Core
 open import Categories.Object.Initial
 open import SOAS.Coalgebraic.Strength
 import SOAS.Metatheory.MetaAlgebra
+import SOAS.Context
 
 -- Initial-algebra semantics
 module SOAS.Metatheory.Semantics {T : Set}
+  (open SOAS.Context {T})
+  ([_]_ : Ctx → T → T)
   (⅀F : Functor 𝔽amiliesₛ 𝔽amiliesₛ) (⅀:Str : Strength ⅀F)
-  (𝔛 : Familyₛ) (open SOAS.Metatheory.MetaAlgebra ⅀F 𝔛)
+  (𝔛 : Familyₛ) (open SOAS.Metatheory.MetaAlgebra ⅀F 𝔛 [_]_)
   (𝕋:Init : Initial 𝕄etaAlgebras)
   where
 
-open import SOAS.Context
 open import SOAS.Variable
 open import SOAS.Construction.Structure as Structure
 open import SOAS.Abstract.Hom
@@ -33,13 +35,13 @@ private
 open Initial 𝕋:Init
 
 open Object ⊥ public renaming (𝐶 to 𝕋 ; ˢ to 𝕋ᵃ)
-open MetaAlg 𝕋ᵃ public renaming (𝑎𝑙𝑔 to 𝕒𝕝𝕘 ; 𝑣𝑎𝑟 to 𝕧𝕒𝕣 ; 𝑚𝑣𝑎𝑟 to 𝕞𝕧𝕒𝕣 ;
+open MetaAlg 𝕋ᵃ public renaming (𝑎𝑙𝑔 to 𝕒𝕝𝕘 ; 𝑣𝑎𝑟 to 𝕧𝕒𝕣 ; 𝑚𝑣𝑎𝑟 to 𝕞𝕧𝕒𝕣 ; 𝑏𝑜𝑥 to 𝕓𝕠𝕩 ;
                                   𝑚≈₁ to 𝕞≈₁ ; 𝑚≈₂ to 𝕞≈₂)
 
 module Semantics (𝒜ᵃ : MetaAlg 𝒜) where
 
   open Morphism (! {𝒜 ⋉ 𝒜ᵃ}) public renaming (𝑓 to 𝕤𝕖𝕞 ; ˢ⇒ to 𝕤𝕖𝕞ᵃ⇒)
-  open MetaAlg⇒ 𝕤𝕖𝕞ᵃ⇒ public renaming (⟨𝑎𝑙𝑔⟩ to ⟨𝕒⟩ ; ⟨𝑣𝑎𝑟⟩ to ⟨𝕧⟩ ; ⟨𝑚𝑣𝑎𝑟⟩ to ⟨𝕞⟩)
+  open MetaAlg⇒ 𝕤𝕖𝕞ᵃ⇒ public renaming (⟨𝑎𝑙𝑔⟩ to ⟨𝕒⟩ ; ⟨𝑣𝑎𝑟⟩ to ⟨𝕧⟩ ; ⟨𝑚𝑣𝑎𝑟⟩ to ⟨𝕞⟩ ; ⟨𝑏𝑜𝑥⟩ to ⟨𝕓⟩)
   open MetaAlg 𝒜ᵃ
   module 𝒜 = MetaAlg 𝒜ᵃ
 
