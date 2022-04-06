@@ -4,15 +4,17 @@ open import SOAS.Families.Core
 open import Categories.Object.Initial
 open import SOAS.Coalgebraic.Strength
 import SOAS.Metatheory.MetaAlgebra
+import SOAS.Context
 
 -- Renaming structure by initiality
 module SOAS.Metatheory.Renaming {T : Set}
+  (open SOAS.Context {T})
+  ([_]_ : Ctx → T → T)
   (⅀F : Functor 𝔽amiliesₛ 𝔽amiliesₛ) (⅀:Str : Strength ⅀F)
-  (𝔛 : Familyₛ) (open SOAS.Metatheory.MetaAlgebra ⅀F 𝔛)
+  (𝔛 : Familyₛ) (open SOAS.Metatheory.MetaAlgebra ⅀F 𝔛 [_]_)
   (𝕋:Init : Initial 𝕄etaAlgebras)
   where
 
-open import SOAS.Context
 open import SOAS.Variable
 open import SOAS.Abstract.Hom
 import SOAS.Abstract.Coalgebra as →□ ; open →□.Sorted
@@ -21,8 +23,8 @@ import SOAS.Abstract.Box as □ ; open □.Sorted
 open import SOAS.Coalgebraic.Map
 
 open import SOAS.Metatheory.Algebra {T} ⅀F
-open import SOAS.Metatheory.Semantics ⅀F ⅀:Str 𝔛 𝕋:Init
-open import SOAS.Metatheory.Traversal ⅀F ⅀:Str 𝔛 𝕋:Init
+open import SOAS.Metatheory.Semantics [_]_ ⅀F ⅀:Str 𝔛 𝕋:Init
+open import SOAS.Metatheory.Traversal [_]_ ⅀F ⅀:Str 𝔛 𝕋:Init
 
 open Strength ⅀:Str
 
@@ -37,7 +39,7 @@ module Renaming = □Traversal 𝕋ᵃ
 
 -- Comultiplication law
 𝕣𝕖𝕟-comp : MapEq₂ ℐᴮ ℐᴮ 𝕒𝕝𝕘 (λ t ρ ϱ → 𝕣𝕖𝕟 t (ϱ ∘ ρ))
-                           (λ t ρ ϱ → 𝕣𝕖𝕟 (𝕣𝕖𝕟 t ρ) ϱ)
+                           (λ t ρ ϱ → 𝕣𝕖𝕟 (𝕣𝕖𝕟 t ρ) ϱ) 𝕓𝕠𝕩
 𝕣𝕖𝕟-comp = record
   { φ = 𝕧𝕒𝕣
   ; ϕ = λ x ρ → 𝕧𝕒𝕣 (ρ x)
@@ -53,6 +55,7 @@ module Renaming = □Traversal 𝕋ᵃ
     ≡˘⟨ congr ⅀.homomorphism (λ - → 𝕒𝕝𝕘 (str ℐᴮ 𝕋 (str ℐᴮ (□ 𝕋) - ρ) ϱ)) ⟩
         𝕒𝕝𝕘 (str ℐᴮ 𝕋 (str ℐᴮ (□ 𝕋) (⅀₁ (λ{ t ρ ϱ → 𝕣𝕖𝕟 t (ϱ ∘ ρ)}) t) ρ) ϱ)
     ∎ }
+  ; f⟨𝑏⟩ = 𝕥⟨𝕓⟩
   ; g⟨𝑣⟩ = trans (𝕥≈₁ 𝕥⟨𝕧⟩) 𝕥⟨𝕧⟩
   ; g⟨𝑚⟩ = trans (𝕥≈₁ 𝕥⟨𝕞⟩) 𝕥⟨𝕞⟩
   ; g⟨𝑎⟩ = λ{ {σ = ρ}{ϱ}{t} → begin
@@ -66,6 +69,7 @@ module Renaming = □Traversal 𝕋ᵃ
     ≡˘⟨ congr ⅀.homomorphism (λ - → 𝕒𝕝𝕘 (str ℐᴮ 𝕋 (str ℐᴮ (□ 𝕋) - ρ) ϱ)) ⟩
         𝕒𝕝𝕘 (str ℐᴮ 𝕋 (str ℐᴮ (□ 𝕋) (⅀₁ (λ{ t ρ ϱ → 𝕣𝕖𝕟 (𝕣𝕖𝕟 t ρ) ϱ}) t) ρ) ϱ)
     ∎ }
+  ; g⟨𝑏⟩ = trans (𝕥≈₁ 𝕥⟨𝕓⟩) 𝕥⟨𝕓⟩
   }
   where
   open ≡-Reasoning
