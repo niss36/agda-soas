@@ -1,18 +1,20 @@
 
 import SOAS.Syntax.Signature as Sig
 open import SOAS.Families.Core
+import SOAS.Context
 
 -- Term syntax for a signature
 module SOAS.Syntax.Term
   {T : Set}(open Sig T)
-  {O : Set}(S : Signature O) where
+  {O : Set}(S : Signature O)
+  (open SOAS.Context {T})
+  ([_]_ : Ctx → T → T) where
 
 
 open import SOAS.Syntax.Arguments {T}
-open import SOAS.Metatheory.Syntax {T}
+open import SOAS.Metatheory.Syntax {T} [_]_
 
 open import SOAS.Common
-open import SOAS.Context {T}
 open import SOAS.Variable
 open import SOAS.Construction.Structure
 open import SOAS.ContextMaps.Inductive
@@ -21,7 +23,7 @@ open import SOAS.Abstract.Hom
 
 open import Categories.Object.Initial
 
-open import Data.List.Base using (List ; [] ; [_] ; _∷_)
+open import Data.List.Base using (List ; [] ; _∷_)
 open import Data.Unit
 
 open Signature S
@@ -32,16 +34,17 @@ private
     Γ Δ Π : Ctx
 
 module _ (𝔛 : Familyₛ) where
-  open import SOAS.Metatheory.MetaAlgebra ⅀F 𝔛
+  open import SOAS.Metatheory.MetaAlgebra ⅀F 𝔛 [_]_
 
   -- Grammar of terms for a (⅀,𝔛)-meta-algebra
   data 𝕋 : Familyₛ where
     con  : ⅀ 𝕋 τ Γ → 𝕋 τ Γ
     var  : ℐ τ Γ → 𝕋 τ Γ
     mvar : 𝔛 τ Π → Sub 𝕋 Π Γ → 𝕋 τ Γ
+    box : (Ψ : Ctx) → 𝕋 τ Ψ → 𝕋 ([ Ψ ] τ) Γ
 
   Tmᵃ : MetaAlg 𝕋
-  Tmᵃ = record { 𝑎𝑙𝑔 = con ; 𝑣𝑎𝑟 = var ; 𝑚𝑣𝑎𝑟 = λ 𝔪 ε → mvar 𝔪 (tabulate ε) }
+  Tmᵃ = record { 𝑎𝑙𝑔 = con ; 𝑣𝑎𝑟 = var ; 𝑚𝑣𝑎𝑟 = λ 𝔪 ε → mvar 𝔪 (tabulate ε) ; 𝑏𝑜𝑥 = λ {Ψ} → box Ψ }
 
   -- 𝕋 is the initial meta-algebra
   𝕋:Init : Initial 𝕄etaAlgebras
@@ -64,12 +67,14 @@ module _ (𝔛 : Familyₛ) where
       𝕤𝕖𝕞 (con (o ⋮ a)) = 𝑎𝑙𝑔 (o ⋮ 𝔸 (Arity o) a)
       𝕤𝕖𝕞 (var v) = 𝑣𝑎𝑟 v
       𝕤𝕖𝕞 (mvar 𝔪 ε) = 𝑚𝑣𝑎𝑟 𝔪 (𝕊 ε)
+      𝕤𝕖𝕞 (box Ψ b) = 𝑏𝑜𝑥 (𝕤𝕖𝕞 b)
 
       𝕤𝕖𝕞ᵃ⇒ : MetaAlg⇒ Tmᵃ 𝒜ᵃ 𝕤𝕖𝕞
       𝕤𝕖𝕞ᵃ⇒ = record
         { ⟨𝑎𝑙𝑔⟩ = λ{ {t = (o ⋮ a)} → cong (λ - → 𝑎𝑙𝑔 (o ⋮ -)) (𝔸-Arg₁ (Arity o) a) }
         ; ⟨𝑣𝑎𝑟⟩ = refl
         ; ⟨𝑚𝑣𝑎𝑟⟩ = λ{ {𝔪 = 𝔪}{ε} → cong (𝑚𝑣𝑎𝑟 𝔪) (dext (𝕊-tab ε)) }
+        ; ⟨𝑏𝑜𝑥⟩ = refl
         }
         where
         𝔸-Arg₁ : (as : List (Ctx × T))(a : Arg as 𝕋 Γ)
@@ -100,6 +105,7 @@ module _ (𝔛 : Familyₛ) where
         𝕤𝕖𝕞! (var v) = sym ⟨𝑣𝑎𝑟⟩
         𝕤𝕖𝕞! (mvar 𝔪 ε) rewrite cong (𝑚𝑣𝑎𝑟 𝔪) (dext (𝕊-ix ε)) =
           trans (sym ⟨𝑚𝑣𝑎𝑟⟩) (cong (g ∘ mvar 𝔪) (tab∘ix≈id ε))
+        𝕤𝕖𝕞! (box Ψ b) rewrite 𝕤𝕖𝕞! b = sym ⟨𝑏𝑜𝑥⟩
 
 -- Syntax instance for a term grammar
 𝕋:Syn : Syntax
