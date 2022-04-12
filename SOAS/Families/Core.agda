@@ -58,3 +58,50 @@ infixr 10 _⇾̣_
 -- Maps between Familyₛ functors
 _⇾̣₂_ : (Familyₛ → Familyₛ) → (Familyₛ → Familyₛ) → Set₁
 (𝓧 ⇾̣₂ 𝓨) = {𝒵 : Familyₛ} → 𝓧 𝒵 ⇾̣ 𝓨 𝒵
+
+-- | Metavariable contexts
+
+-- Inductive construction of context- and type-indexed sets
+data MCtx : Set where
+  ⁅⁆      : MCtx
+  ⁅_⊩ₙ_⁆_ : (Π : Ctx) → (τ : T) → MCtx → MCtx
+infixr 7 ⁅_⊩ₙ_⁆_
+
+-- Pattern synonym for parameterless elements and final elements
+infixr 10 ⁅_⁆̣ ⁅_⊩ₙ_⁆̣
+infixr 7 ⁅_⁆_ ⁅_⊩_⁆_ ⁅_·_⊩_⁆_ ⁅_⊩_⁆̣ ⁅_·_⊩_⁆̣ _⁅_⊩ₙ_⁆
+pattern ⁅_⁆̣ α = ⁅ ∅ ⊩ₙ α ⁆ ⁅⁆
+pattern ⁅_⊩ₙ_⁆̣ Π α = ⁅ Π ⊩ₙ α ⁆ ⁅⁆
+pattern ⁅_⁆_ τ 𝔐 = ⁅ ∅ ⊩ₙ τ ⁆ 𝔐
+pattern ⁅_⊩_⁆_ τ α 𝔐 = ⁅ ⌊ τ ⌋ ⊩ₙ α ⁆ 𝔐
+pattern ⁅_·_⊩_⁆_ τ₁ τ₂ α 𝔐 = ⁅ ⌊ τ₁ ∙ τ₂ ⌋ ⊩ₙ α ⁆ 𝔐
+pattern ⁅_⊩_⁆̣ τ α = ⁅ ⌊ τ ⌋ ⊩ₙ α ⁆ ⁅⁆
+pattern ⁅_·_⊩_⁆̣ τ₁ τ₂ α = ⁅ ⌊ τ₁ ∙ τ₂ ⌋ ⊩ₙ α ⁆ ⁅⁆
+
+-- Add type-context pair to the end of the metavariable context
+_⁅_⊩ₙ_⁆ : MCtx → Ctx → T → MCtx
+⁅⁆              ⁅ Γ ⊩ₙ α ⁆ = ⁅ Γ ⊩ₙ α ⁆̣
+(⁅ Π ⊩ₙ τ ⁆ 𝔐) ⁅ Γ ⊩ₙ α ⁆ = ⁅ Π ⊩ₙ τ ⁆ (𝔐 ⁅ Γ ⊩ₙ α ⁆)
+
+private
+  variable
+    Γ Δ : Ctx
+    α β : T
+    𝔐 : MCtx
+
+-- Membership of metavariable contexts
+data _⊩_∈_ : Ctx → T → MCtx → Set where
+  ↓ : Γ ⊩ α ∈ (⁅ Γ ⊩ₙ α ⁆ 𝔐)
+  ↑_ : Γ ⊩ α ∈ 𝔐 → Γ ⊩ α ∈ (⁅ Δ ⊩ₙ β ⁆ 𝔐)
+
+infixr 220 ↑_
+
+-- Metavariable context can be interpreted as a family via the membership
+∥_∥ : MCtx → Familyₛ
+∥ 𝔐 ∥ α Γ = Γ ⊩ α ∈ 𝔐
+infixr 60 ∥_∥
+
+_▷_ : MCtx → (Familyₛ → Familyₛ) → Familyₛ
+𝔐 ▷ 𝒳 = 𝒳 ∥ 𝔐 ∥
+infix 4 _▷_
+
