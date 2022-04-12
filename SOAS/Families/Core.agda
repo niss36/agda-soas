@@ -119,8 +119,8 @@ infixr 10 _⇾̣₂_
 _² : (Familyₛ → Familyₛ) → (Family₂ → Family₂)
 _² = sorted {MCtx}
 
-_₂ : (Familyₛ → Familyₛ → Familyₛ) → (Family₂ → Family₂ → Family₂)
-_₂ = sorted₂ {MCtx}
+_²₂ : (Familyₛ → Familyₛ → Familyₛ) → (Family₂ → Family₂ → Family₂)
+_²₂ = sorted₂ {MCtx}
 
 _ᴷ : Familyₛ → Family₂
 _ᴷ 𝒜 𝔐 = 𝒜
