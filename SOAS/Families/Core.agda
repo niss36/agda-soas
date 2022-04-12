@@ -4,7 +4,7 @@ module SOAS.Families.Core {T : Set} where
 
 open import SOAS.Common
 open import SOAS.Context {T}
-open import SOAS.Sorting {T}
+open import SOAS.Sorting
 
 
 -- | Unsorted
@@ -39,7 +39,7 @@ module 𝔽am = Category 𝔽amilies
 
 -- Category of sorted families
 𝔽amiliesₛ : Category 1ℓ 0ℓ 0ℓ
-𝔽amiliesₛ = 𝕊orted 𝔽amilies
+𝔽amiliesₛ = 𝕊orted {T} 𝔽amilies
 module 𝔽amₛ = Category 𝔽amiliesₛ
 
 -- Type of sorted families
@@ -55,9 +55,6 @@ infixr 10 _⇾̣_
 ∀[_] : Familyₛ → Family
 ∀[ 𝒳 ] Γ = {τ : T} → 𝒳 τ Γ
 
--- Maps between Familyₛ functors
-_⇾̣₂_ : (Familyₛ → Familyₛ) → (Familyₛ → Familyₛ) → Set₁
-(𝓧 ⇾̣₂ 𝓨) = {𝒵 : Familyₛ} → 𝓧 𝒵 ⇾̣ 𝓨 𝒵
 
 -- | Metavariable contexts
 
@@ -105,3 +102,25 @@ _▷_ : MCtx → (Familyₛ → Familyₛ) → Familyₛ
 𝔐 ▷ 𝒳 = 𝒳 ∥ 𝔐 ∥
 infix 4 _▷_
 
+
+-- | Sorted with metavariable context
+𝔽amilies₂ : Category 1ℓ 0ℓ 0ℓ
+𝔽amilies₂ = 𝕊orted {MCtx} 𝔽amiliesₛ
+module 𝔽am₂ = Category 𝔽amilies₂
+
+Family₂ : Set₁
+Family₂ = 𝔽am₂.Obj
+
+-- Maps between sorted families
+_⇾̣₂_ : Family₂ → Family₂ → Set
+_⇾̣₂_ = 𝔽am₂._⇒_
+infixr 10 _⇾̣₂_
+
+_² : (Familyₛ → Familyₛ) → (Family₂ → Family₂)
+_² = sorted {MCtx}
+
+_₂ : (Familyₛ → Familyₛ → Familyₛ) → (Family₂ → Family₂ → Family₂)
+_₂ = sorted₂ {MCtx}
+
+_ᴷ : Familyₛ → Family₂
+_ᴷ 𝒜 𝔐 = 𝒜
