@@ -6,7 +6,6 @@ module SOAS.Metatheory.Syntax {T : Set}
   ([_]_ : Ctx → T → T) where
 
 open import SOAS.Families.Core {T}
-open import SOAS.Families.Build
 
 open import SOAS.Common
 open import Categories.Object.Initial
@@ -25,12 +24,11 @@ record Syntax : Set₁ where
   field
     ⅀F    : Functor 𝔽amiliesₛ 𝔽amiliesₛ
     ⅀:CS  : CompatStrengths ⅀F
-    𝕋:Init : (𝔛 : Familyₛ) → Initial (𝕄etaAlgebras ⅀F 𝔛 [_]_)
-    mvarᵢ  : {𝔛 : Familyₛ}{τ : T}{Π Γ : Ctx} (open Initial (𝕋:Init 𝔛))
-          → 𝔛 τ Π → Sub (𝐶 ⊥) Π Γ → 𝐶 ⊥ τ Γ
+    𝕋:Init : Initial (𝕄etaAlgebras ⅀F [_]_)
+    mvarᵢ  : {𝔐 : MCtx}{τ : T}{Π Γ : Ctx} (open Initial 𝕋:Init)
+          → (Π ⊩ τ ∈ 𝔐) → Sub (𝐶 ⊥ 𝔐) Π Γ → 𝐶 ⊥ 𝔐 τ Γ
 
-  module _ {𝔛 : Familyₛ} where
-    open Initial (𝕋:Init 𝔛)
+  open Initial 𝕋:Init
 
   private
     variable
@@ -38,8 +36,8 @@ record Syntax : Set₁ where
       Γ Π Π₁ Π₂ Π₃ Π₄ : Ctx
       𝔐 : MCtx
     Tm : MCtx → Familyₛ
-    Tm 𝔐 = 𝐶 (Initial.⊥ (𝕋:Init ∥ 𝔐 ∥))
-
+    Tm 𝔐 = 𝐶 ⊥ 𝔐
+  --
   -- Shorthands for metavariables associated with a metavariable environment
   infix 100 𝔞⟨_ 𝔟⟨_ 𝔠⟨_ 𝔡⟨_ 𝔢⟨_
   infix 100 ◌ᵃ⟨_ ◌ᵇ⟨_ ◌ᶜ⟨_ ◌ᵈ⟨_ ◌ᵉ⟨_
@@ -73,7 +71,7 @@ record Syntax : Set₁ where
   𝔡 = 𝔡⟨ •
   𝔢 : Tm (⁅ Π₄ ⊩ₙ α₄ ⁆ ⁅ Π₃ ⊩ₙ α₃ ⁆ ⁅ Π₂ ⊩ₙ α₂ ⁆ ⁅ Π₁ ⊩ₙ α₁ ⁆ ⁅ α ⁆ 𝔐) α Γ
   𝔢 = 𝔢⟨ •
-  
+
   -- Synonyms for holes
   ◌ᵃ = 𝔞 ; ◌ᵇ = 𝔟 ; ◌ᶜ = 𝔠 ; ◌ᵈ = 𝔡 ; ◌ᵉ = 𝔢
   ◌ᵃ⟨_ = 𝔞⟨_ ; ◌ᵇ⟨_ = 𝔟⟨_ ; ◌ᶜ⟨_ = 𝔠⟨_ ; ◌ᵈ⟨_ = 𝔡⟨_ ; ◌ᵉ⟨_ = 𝔢⟨_
