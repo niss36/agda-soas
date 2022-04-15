@@ -10,8 +10,8 @@ module SOAS.Syntax.Shorthands {T : Set}
   (open SOAS.Context {T})
   {⅀F : Functor 𝔽amiliesₛ 𝔽amiliesₛ}
   ([_]_ : Ctx → T → T)
-  (open SOAS.Metatheory.MetaAlgebra ⅀F)
-  {𝒜 : Familyₛ → Familyₛ}(𝒜ᵃ : (𝔛 : Familyₛ) → MetaAlg 𝔛 [_]_ (𝒜 𝔛))
+  (open SOAS.Metatheory.MetaAlgebra ⅀F [_]_)
+  {𝓐 : Family₂}(𝓐ᵃ : MetaAlg 𝓐)
   where
 
 open import SOAS.Families.Build
@@ -25,9 +25,10 @@ private
   variable
     α β γ δ υ : T
     Γ Δ : Ctx
+    𝔐 : MCtx
 
-module _ {𝔛 : Familyₛ} where
-  open MetaAlg 𝔛 [_]_ (𝒜ᵃ 𝔛)
+module _ where
+  open MetaAlg 𝓐ᵃ
 
   -- Refer to variables via de Bruijn numerals: e.g. ` 2 = 𝑣𝑎𝑟 (old (old new))
   len : Ctx → ℕ
@@ -42,17 +43,17 @@ module _ {𝔛 : Familyₛ} where
   deBruijn {_ ∙ _} {zero}    (s≤s z≤n)  =  new
   deBruijn {_ ∙ Γ} {(suc n)} (s≤s p)    =  old (deBruijn p)
 
-  ′ : {Γ : Ctx}(n : ℕ){n∈Γ : True (suc n ≤? len Γ)} → 𝒜 𝔛 (ix (toWitness n∈Γ)) Γ
+  ′ : {Γ : Ctx}(n : ℕ){n∈Γ : True (suc n ≤? len Γ)} → 𝓐 𝔐 (ix (toWitness n∈Γ)) Γ
   ′ n {n∈Γ} = 𝑣𝑎𝑟 (deBruijn (toWitness n∈Γ))
 
   -- Explicit abbreviations for de Bruijn indices 0-4
-  x₀ : 𝒜 𝔛 α (α ∙ Γ)
+  x₀ : 𝓐 𝔐 α (α ∙ Γ)
   x₀ = 𝑣𝑎𝑟 new
-  x₁ : 𝒜 𝔛 β (α ∙ β ∙ Γ)
+  x₁ : 𝓐 𝔐 β (α ∙ β ∙ Γ)
   x₁ = 𝑣𝑎𝑟 (old new)
-  x₂ : 𝒜 𝔛 γ (α ∙ β ∙ γ ∙ Γ)
+  x₂ : 𝓐 𝔐 γ (α ∙ β ∙ γ ∙ Γ)
   x₂ = 𝑣𝑎𝑟 (old (old new))
-  x₃ : 𝒜 𝔛 δ (α ∙ β ∙ γ ∙ δ ∙ Γ)
+  x₃ : 𝓐 𝔐 δ (α ∙ β ∙ γ ∙ δ ∙ Γ)
   x₃ = 𝑣𝑎𝑟 (old (old (old new)))
-  x₄ : 𝒜 𝔛 υ (α ∙ β ∙ γ ∙ δ ∙ υ ∙ Γ)
+  x₄ : 𝓐 𝔐 υ (α ∙ β ∙ γ ∙ δ ∙ υ ∙ Γ)
   x₄ = 𝑣𝑎𝑟 (old (old (old (old new))))
