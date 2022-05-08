@@ -18,9 +18,6 @@ import SOAS.Abstract.Coalgebra {T} as →□ ; open →□.Sorted
 open import SOAS.Metatheory.Algebra ⅀F
 open import SOAS.Metatheory.Contextual [_]_
 
-〖_,_〗² : Family₂ → Family₂ → Family₂
-〖_,_〗² = 〖_,_〗 ²₂
-
 private
   variable
     Γ Δ Π Ψ : Ctx
