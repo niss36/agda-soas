@@ -3,7 +3,7 @@ open import Data.Nat.Show renaming (show to showNat)
 open import Data.String using (String) renaming (_++_ to _^^_)
 open import Data.List using (List; []; _∷_; _++_)
 
-module STCMTT.FreeVariables where
+module STCMTT.Examples where
 
 open import STCMTT.Signature
 open import STCMTT.Syntax hiding (⅀F)
