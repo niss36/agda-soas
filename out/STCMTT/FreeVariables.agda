@@ -13,8 +13,6 @@ open import SOAS.Context {ΛT}
 open import SOAS.Variable {ΛT}
 open import SOAS.Families.Core {ΛT}
 
--- open import SOAS.Metatheory.MetaAlgebra
-
 showT : ℕ → ΛT → String
 showCtx : ℕ → Ctx → String
 
@@ -31,46 +29,7 @@ showOp appₒ = "app"
 showOp lamₒ = "lam"
 
 open import SOAS.FreeVariables {ΛT}
-open import SOAS.PrettyPrint {ΛT} showCtx
-
--- module _ (𝔛 : Familyₛ) where
---   ℱ𝒱ᵃ : MetaAlg ⅀F 𝔛 [_]_ ℱ𝒱
---   ℱ𝒱ᵃ = record {
---       𝑎𝑙𝑔 = λ {τ}{Γ} → λ{ (appₒ ⋮ f , a) → f ++ a ; (lamₒ {α} ⋮ b) → contract¹ {τ}{α}{Γ} b }
---     ; 𝑣𝑎𝑟 = λ {τ} x → (τ , x) ∷ []
---     ; 𝑚𝑣𝑎𝑟 = λ {τ}{Γ} 𝔪 {Δ} ε → mvarThing {τ} Γ ε
---     ; 𝑏𝑜𝑥 = λ x → [] }
---
---   FV : Λ 𝔛 ⇾̣ ℱ𝒱
---   FV = 𝕤𝕖𝕞 𝔛 ℱ𝒱ᵃ
---
---   bar : Λ 𝔛 (N ↣ N) (N ∙ ∅)
---   bar = ƛ (var (old new))
---
---   baz : Λ 𝔛 ([ ∅ ] (N ↣ N)) ∅
---   baz = box ∅ (ƛ var new)
---
---   private module FreeVar' = FreeVar 𝔛 [_]_ Λ:Sig (𝕋:Init 𝔛)
---
---   f : MetaAlg⇒ {ΛT} ⅀F 𝔛 [_]_ ℱ𝒱ᵃ FreeVar'.ℱ𝒱ᵃ λ z → z
---   f = record {
---         ⟨𝑎𝑙𝑔⟩ = λ {α}{Γ} → λ{ {appₒ ⋮ f , a} → refl ; {lamₒ ⋮ b} → refl }
---       ; ⟨𝑣𝑎𝑟⟩ = refl
---       ; ⟨𝑚𝑣𝑎𝑟⟩ = refl
---       ; ⟨𝑏𝑜𝑥⟩ = refl
---     }
---
---   g : MetaAlg⇒ {ΛT} ⅀F 𝔛 [_]_ FreeVar'.ℱ𝒱ᵃ ℱ𝒱ᵃ λ z → z
---   g = record {
---         ⟨𝑎𝑙𝑔⟩ = λ {α}{Γ} → λ{ {appₒ ⋮ f , a} → refl ; {lamₒ ⋮ b} → refl }
---       ; ⟨𝑣𝑎𝑟⟩ = refl
---       ; ⟨𝑚𝑣𝑎𝑟⟩ = refl
---       ; ⟨𝑏𝑜𝑥⟩ = refl }
---
---   _ : {! MetaAlgebra⇒ {ΛT} ⅀F 𝔛 [_]_ ℱ𝒱ᵃ  !}
---
---   h : MetaAlgebra⇒ {ΛT} ⅀F 𝔛 [_]_ ℱ𝒱ᵃ FreeVar'.ℱ𝒱ᵃ
---   h = ?
+open import SOAS.PrettyPrint {ΛT} showT showCtx
 
 open import SOAS.ContextMaps.Inductive {ΛT}
 
@@ -96,10 +55,16 @@ module Examples where
   e6 : Λ ⁅⁆ ([ N ∙ ∅ ] N) ∅
   e6 = box (N ∙ ∅) (var new)
 
+  e7 : Λ ⁅⁆ N (([ ∅ ] N) ∙ ∅)
+  e7 = letbox (∅ , N , var new , mvar ↓ •)
+
+  e8 : Λ (⁅ ∅ ⊩ₙ [ (N ↣ N) ∙ ∅ ] N ⁆ ⁅⁆) N ∅
+  e8 = letbox ( (N ↣ N) ∙ ∅ , N , mvar ↓ • , mvar ↓ ((ƛ var new) ◂ •) )
+
   em1 : Λ (⁅ ((N ↣ N) ∙ N ∙ ∅) ⊩ₙ N ⁆ ⁅⁆) N (N ∙ ∅)
   em1 = mvar ↓ ((ƛ var new) ◂ (var new ◂ •))
 
   em2 : Λ (⁅ N ∙ ∅ ⊩ₙ (N ↣ N) ⁆ ⁅ ((N ↣ N) ∙ N ∙ ∅) ⊩ₙ N ⁆ ⁅⁆) (N ↣ N) ∅
   em2 = ƛ mvar (↑ ↓) (mvar ↓ ((var new) ◂ •) ◂ (var new ◂ •))
 
-  _ : {! PP e6  !}
+  _ : {! PP e8  !}

@@ -35,13 +35,13 @@ private
 open Initial 𝕋:Init
 
 open Object ⊥ public renaming (𝐶 to 𝕋 ; ˢ to 𝕋ᵃ)
-open MetaAlg 𝕋ᵃ public renaming (𝑎𝑙𝑔 to 𝕒𝕝𝕘 ; 𝑣𝑎𝑟 to 𝕧𝕒𝕣 ; 𝑚𝑣𝑎𝑟 to 𝕞𝕧𝕒𝕣 ; 𝑏𝑜𝑥 to 𝕓𝕠𝕩 ;
+open MetaAlg 𝕋ᵃ public renaming (𝑎𝑙𝑔 to 𝕒𝕝𝕘 ; 𝑣𝑎𝑟 to 𝕧𝕒𝕣 ; 𝑚𝑣𝑎𝑟 to 𝕞𝕧𝕒𝕣 ; 𝑏𝑜𝑥 to 𝕓𝕠𝕩 ; 𝑙𝑒𝑡𝑏𝑜𝑥 to 𝕝𝕖𝕥𝕓𝕠𝕩 ;
                                   𝑚≈₁ to 𝕞≈₁ ; 𝑚≈₂ to 𝕞≈₂)
 
 module Semantics (𝓐ᵃ : MetaAlg 𝓐) where
 
   open Morphism (! {𝓐 ⋉ 𝓐ᵃ}) public renaming (𝑓 to 𝕤𝕖𝕞 ; ˢ⇒ to 𝕤𝕖𝕞ᵃ⇒)
-  open MetaAlg⇒ 𝕤𝕖𝕞ᵃ⇒ public renaming (⟨𝑎𝑙𝑔⟩ to ⟨𝕒⟩ ; ⟨𝑣𝑎𝑟⟩ to ⟨𝕧⟩ ; ⟨𝑚𝑣𝑎𝑟⟩ to ⟨𝕞⟩ ; ⟨𝑏𝑜𝑥⟩ to ⟨𝕓⟩)
+  open MetaAlg⇒ 𝕤𝕖𝕞ᵃ⇒ public renaming (⟨𝑎𝑙𝑔⟩ to ⟨𝕒⟩ ; ⟨𝑣𝑎𝑟⟩ to ⟨𝕧⟩ ; ⟨𝑚𝑣𝑎𝑟⟩ to ⟨𝕞⟩ ; ⟨𝑏𝑜𝑥⟩ to ⟨𝕓⟩ ; ⟨𝑙𝑒𝑡𝑏𝑜𝑥⟩ to ⟨𝕝⟩)
   open MetaAlg 𝓐ᵃ
   module 𝓐 = MetaAlg 𝓐ᵃ
 
