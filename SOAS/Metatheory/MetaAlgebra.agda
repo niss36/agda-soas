@@ -5,10 +5,10 @@ import SOAS.Context
 
 -- Families with syntactic structure
 module SOAS.Metatheory.MetaAlgebra {T : Set}
-  (open SOAS.Families.Core {T})
   (open SOAS.Context {T})
-  (⅀F : Functor 𝔽amiliesₛ 𝔽amiliesₛ)
-  ([_]_ : Ctx → T → T) where
+  ([_]_ : Ctx → T → T)
+  (open SOAS.Families.Core {T})
+  (⅀F : Functor 𝔽amiliesₛ 𝔽amiliesₛ) where
 
 open import SOAS.Variable {T}
 open import SOAS.Construction.Structure as Structure

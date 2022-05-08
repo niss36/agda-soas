@@ -11,7 +11,7 @@ module SOAS.Metatheory.Substitution {T : Set}
   (open SOAS.Context {T})
   ([_]_ : Ctx → T → T)
   (⅀F : Functor 𝔽amiliesₛ 𝔽amiliesₛ) (⅀:Str : Strength ⅀F)
-  (open SOAS.Metatheory.MetaAlgebra ⅀F [_]_)
+  (open SOAS.Metatheory.MetaAlgebra [_]_ ⅀F)
   (𝕋:Init : Initial 𝕄etaAlgebras)
   where
 

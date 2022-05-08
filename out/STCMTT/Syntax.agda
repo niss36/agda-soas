@@ -31,7 +31,7 @@ module Λ:Terms where
   infixl 20 _$_
   infixr 10 ƛ_
 
-  open import SOAS.Metatheory.MetaAlgebra ⅀F [_]_
+  open import SOAS.Metatheory.MetaAlgebra [_]_ ⅀F
 
   Λᵃ : MetaAlg Λ
   Λᵃ = record

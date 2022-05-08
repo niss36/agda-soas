@@ -34,7 +34,7 @@ module PrettyPrint
   {O : Set}(𝕋:Sig : Signature O)
   (showOp : O → String)
   (open Signature 𝕋:Sig)
-  (𝕋:Init : Initial (𝕄etaAlgebras ⅀F [_]_)) where
+  (𝕋:Init : Initial (𝕄etaAlgebras [_]_ ⅀F)) where
 
   open import SOAS.Abstract.ExpStrength
   open CompatStrengths ⅀:CompatStr
@@ -86,7 +86,7 @@ module PrettyPrint
         mvarArgs = ppMvarArgs {𝔐}{τ}{Δ} Γ ε
     in "𝔪" ++ showNat (mvarToNat 𝔐 𝔪) ++ "⟨" ++ (proj₁ mvarArgs) ++ "⟩" , proj₂ mvarArgs
 
-  𝓟𝓟ᵃ : MetaAlg ⅀F [_]_ 𝓟𝓟
+  𝓟𝓟ᵃ : MetaAlg [_]_ ⅀F 𝓟𝓟
   𝓟𝓟ᵃ = record {
         𝑎𝑙𝑔 = λ {𝔐} → ppAlg {𝔐}
       ; 𝑣𝑎𝑟 = λ {𝔐} → ppVar {𝔐}

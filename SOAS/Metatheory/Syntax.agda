@@ -24,7 +24,7 @@ record Syntax : Set₁ where
   field
     ⅀F    : Functor 𝔽amiliesₛ 𝔽amiliesₛ
     ⅀:CS  : CompatStrengths ⅀F
-    𝕋:Init : Initial (𝕄etaAlgebras ⅀F [_]_)
+    𝕋:Init : Initial (𝕄etaAlgebras [_]_ ⅀F)
     mvarᵢ  : {𝔐 : MCtx}{τ : T}{Π Γ : Ctx} (open Initial 𝕋:Init)
           → (Π ⊩ τ ∈ 𝔐) → Sub (𝐶 ⊥ 𝔐) Π Γ → 𝐶 ⊥ 𝔐 τ Γ
 

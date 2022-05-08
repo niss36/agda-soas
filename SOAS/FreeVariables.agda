@@ -34,7 +34,7 @@ module FreeVar
   ([_]_ : Ctx → T → T)
   {O : Set}(𝕋:Sig : Signature O)
   (open Signature 𝕋:Sig)
-  (open SOAS.Metatheory.MetaAlgebra {T} ⅀F [_]_)
+  (open SOAS.Metatheory.MetaAlgebra {T} [_]_ ⅀F)
   (𝕋:Init : Initial 𝕄etaAlgebras) where
 
   open import SOAS.Abstract.ExpStrength

@@ -10,7 +10,7 @@ module SOAS.Syntax.Shorthands {T : Set}
   (open SOAS.Context {T})
   {⅀F : Functor 𝔽amiliesₛ 𝔽amiliesₛ}
   ([_]_ : Ctx → T → T)
-  (open SOAS.Metatheory.MetaAlgebra ⅀F [_]_)
+  (open SOAS.Metatheory.MetaAlgebra [_]_ ⅀F)
   {𝓐 : Family₂}(𝓐ᵃ : MetaAlg 𝓐)
   where
 
