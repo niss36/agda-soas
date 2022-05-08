@@ -2,50 +2,48 @@ open import SOAS.Common
 
 open import Data.Nat
 open import Data.Nat.Show renaming (show to showNat)
-open import Data.List using (List; []; _∷_; map)
+open import Data.List using (List; []; _∷_; map; unzip)
 open import Data.List.Extrema.Nat
 open import Data.String using (String; _++_) renaming (intersperse to join)
 
+open import Categories.Object.Initial
+
 import SOAS.Context
+import SOAS.Syntax.Signature
+import SOAS.Metatheory.MetaAlgebra
 
 module SOAS.PrettyPrint {T : Set}
   (open SOAS.Context {T})
   (showT : ℕ → T → String)
-  (showCtx : ℕ → Ctx → String) where
+  (showCtx : ℕ → Ctx → String)
+  ([_]_ : Ctx → T → T)
+  (open SOAS.Syntax.Signature T)
+  {O : Set}(𝕋:Sig : Signature O)
+  (showOp : O → String)
+  (open Signature 𝕋:Sig)
+  (open SOAS.Metatheory.MetaAlgebra {T} [_]_ ⅀F)
+  (𝕋:Init : Initial (𝕄etaAlgebras)) where
 
 open import SOAS.Variable
 open import SOAS.Families.Core {T}
 
-𝓟𝓟 : Family₂
-𝓟𝓟 𝔐 τ Γ = String × ℕ × ℕ
+open import SOAS.Syntax.Arguments {T}
+
+open import SOAS.Abstract.ExpStrength
+open CompatStrengths ⅀:CompatStr
+open import SOAS.Metatheory.Semantics {T} [_]_ ⅀F CoalgStr 𝕋:Init
 
 len : Ctx → ℕ
 len ∅ = ℕ.zero
 len (α ∙ Γ) = suc (len Γ)
 
-unzip : {A B : Set} → List (A × B) → (List A) × (List B)
-unzip l = (map proj₁ l) , (map proj₂ l)
-
 unzip³ : {A B C : Set} → List (A × B × C) → (List A) × (List B) × (List C)
 unzip³ l = let z = unzip l in (proj₁ z) , (unzip (proj₂ z))
 
-open import Categories.Object.Initial
+module _ where
 
-open import SOAS.Syntax.Arguments {T}
-open import SOAS.Syntax.Signature T
-
-open import SOAS.Metatheory.MetaAlgebra {T}
-
-module PrettyPrint
-  ([_]_ : Ctx → T → T)
-  {O : Set}(𝕋:Sig : Signature O)
-  (showOp : O → String)
-  (open Signature 𝕋:Sig)
-  (𝕋:Init : Initial (𝕄etaAlgebras [_]_ ⅀F)) where
-
-  open import SOAS.Abstract.ExpStrength
-  open CompatStrengths ⅀:CompatStr
-  open import SOAS.Metatheory.Semantics {T} [_]_ ⅀F CoalgStr 𝕋:Init
+  𝓟𝓟 : Family₂
+  𝓟𝓟 𝔐 τ Γ = String × ℕ × ℕ
 
   -- Operators
 
@@ -97,7 +95,7 @@ module PrettyPrint
     let mvarArgs = ppMvarArgs {𝔐}{τ}{Δ} Γ ε
     in "𝔪" ++ showNat (mvarToNat 𝔐 𝔪) ++ "⟨" ++ (proj₁ mvarArgs) ++ "⟩" , proj₂ mvarArgs
 
-  𝓟𝓟ᵃ : MetaAlg [_]_ ⅀F 𝓟𝓟
+  𝓟𝓟ᵃ : MetaAlg 𝓟𝓟
   𝓟𝓟ᵃ = record {
         𝑎𝑙𝑔 = λ {𝔐} → ppAlg {𝔐}
       ; 𝑣𝑎𝑟 = λ {𝔐} → ppVar {𝔐}
