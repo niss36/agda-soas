@@ -28,13 +28,12 @@ showOp : Λₒ → String
 showOp appₒ = "app"
 showOp lamₒ = "lam"
 
-open import SOAS.FreeVariables {ΛT}
+open import SOAS.FreeVariables {ΛT} [_]_ Λ:Sig 𝕋:Init
 open import SOAS.PrettyPrint {ΛT} showT showCtx
 
 open import SOAS.ContextMaps.Inductive {ΛT}
 
 module Examples where
-  open FreeVar [_]_ Λ:Sig 𝕋:Init
   open PrettyPrint [_]_ Λ:Sig showOp 𝕋:Init
 
   e1 : Λ ⁅⁆ (N ↣ N) ∅
@@ -67,4 +66,4 @@ module Examples where
   em2 : Λ (⁅ N ∙ ∅ ⊩ₙ (N ↣ N) ⁆ ⁅ ((N ↣ N) ∙ N ∙ ∅) ⊩ₙ N ⁆ ⁅⁆) (N ↣ N) ∅
   em2 = ƛ mvar (↑ ↓) (mvar ↓ ((var new) ◂ •) ◂ (var new ◂ •))
 
-  _ : {! PP e8  !}
+  _ : {! FMV e8  !}
