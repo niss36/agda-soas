@@ -16,31 +16,7 @@ open import SOAS.Abstract.Hom {T}
 import SOAS.Abstract.Coalgebra {T} as →□ ; open →□.Sorted
 
 open import SOAS.Metatheory.Algebra ⅀F
-open import Data.Product using (Σ; Σ-syntax)
-
--- Context Replacement
-KF : Ctx → Functor 𝔽amiliesₛ 𝔽amiliesₛ
-KF Ψ = record { F₀ = λ Fam α Γ → Fam α Ψ ; F₁ = λ f → f ; identity = refl ; homomorphism = refl ; F-resp-≈ = λ z → z }
-
-K₀ : Ctx → Familyₛ → Familyₛ
-K₀ Ψ = Functor.₀ (KF Ψ)
-
-K₁ : (Ψ : Ctx) → {𝒳 𝒴 : Familyₛ} → 𝒳 ⇾̣ 𝒴 → (K₀ Ψ) 𝒳 ⇾̣ (K₀ Ψ) 𝒴
-K₁ Ψ = Functor.₁ (KF Ψ)
-
--- Box
-δF : Ctx → Functor 𝔽amiliesₛ 𝔽amiliesₛ
-δF Ψ = record { F₀ = λ Fam α Γ → Fam ([ Ψ ] α) Γ ; F₁ = λ f → f ; identity = refl ; homomorphism = refl ; F-resp-≈ = λ z → z }
-
-δ₀ : Ctx → Familyₛ → Familyₛ
-δ₀ Ψ = Functor.₀ (δF Ψ)
-
-δ₁ : (Ψ : Ctx) → {𝒳 𝒴 : Familyₛ} → 𝒳 ⇾̣ 𝒴 → (δ₀ Ψ) 𝒳 ⇾̣ (δ₀ Ψ) 𝒴
-δ₁ Ψ = Functor.₁ (δF Ψ)
-
--- LetBox
-LB : Family₂ → Family₂
-LB 𝓐 𝔐 τ Γ = Σ[ Ψ ∈ Ctx ] Σ[ α ∈ T ] (𝓐 𝔐 ([ Ψ ] α) Γ × 𝓐 (⁅ Ψ ⊩ₙ α ⁆ 𝔐) τ Γ)
+open import SOAS.Metatheory.Contextual [_]_
 
 〖_,_〗² : Family₂ → Family₂ → Family₂
 〖_,_〗² = 〖_,_〗 ²₂
@@ -58,7 +34,7 @@ record MetaAlg (𝓐 : Family₂) : Set where
     𝑎𝑙𝑔 : (⅀ ²) 𝓐 ⇾̣₂ 𝓐
     𝑣𝑎𝑟 : (ℐ ᴷ) ⇾̣₂ 𝓐
     𝑚𝑣𝑎𝑟 : ∥_∥ ⇾̣₂ 〖 𝓐 , 𝓐 〗²
-    𝑏𝑜𝑥 : (K₀ Ψ ²) 𝓐 ⇾̣₂ (δ₀ Ψ ²) 𝓐
+    𝑏𝑜𝑥 : (K Ψ ²) 𝓐 ⇾̣₂ (δbox Ψ ²) 𝓐
 
   -- Congruence in metavariable arguments
   𝑚≈₁ : {𝔪₁ 𝔪₂ : Π ⊩ α ∈ 𝔐}{σ : Π ~[ 𝓐 𝔐 ]↝ Γ}
@@ -81,7 +57,7 @@ record MetaAlg⇒ {𝓐 𝓑 : Family₂}(𝓐ᵃ : MetaAlg 𝓐)(𝓑ᵃ : Meta
     ⟨𝑎𝑙𝑔⟩  : {t : ⅀ (𝓐 𝔐) α Γ} → f (𝓐.𝑎𝑙𝑔 t) ≡ 𝓑.𝑎𝑙𝑔 (⅀₁ f t)
     ⟨𝑣𝑎𝑟⟩  : {v : ℐ α Γ} → f (𝓐.𝑣𝑎𝑟 {𝔐} v) ≡ 𝓑.𝑣𝑎𝑟 v
     ⟨𝑚𝑣𝑎𝑟⟩ : {𝔪 : Π ⊩ α ∈ 𝔐}{ε : Π ~[ 𝓐 𝔐 ]↝ Γ} → f (𝓐.𝑚𝑣𝑎𝑟 𝔪 ε) ≡ 𝓑.𝑚𝑣𝑎𝑟 𝔪 (f ∘ ε)
-    ⟨𝑏𝑜𝑥⟩ : {b : K₀ Ψ (𝓐 𝔐) α Γ} → f (𝓐.𝑏𝑜𝑥 {Γ = Γ} b) ≡ 𝓑.𝑏𝑜𝑥 (f b)
+    ⟨𝑏𝑜𝑥⟩ : {b : K Ψ (𝓐 𝔐) α Γ} → f (𝓐.𝑏𝑜𝑥 {Γ = Γ} b) ≡ 𝓑.𝑏𝑜𝑥 (f b)
 
 -- Category of meta-algebras
 module MetaAlgebraStructure = Structure 𝔽amilies₂ MetaAlg
