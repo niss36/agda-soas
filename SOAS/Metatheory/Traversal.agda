@@ -21,6 +21,7 @@ import SOAS.Abstract.Coalgebra as →□ ; open →□.Sorted
 import SOAS.Abstract.Box as □ ; open □.Sorted
 
 open import SOAS.Metatheory.Algebra ⅀F
+open import SOAS.Metatheory.Contextual [_]_
 open import SOAS.Metatheory.Semantics [_]_ ⅀F ⅀:Str 𝕋:Init
 
 open Strength ⅀:Str
@@ -37,7 +38,7 @@ module Traversal (𝓟ᴮ : {𝔐 : MCtx} → Coalgₚ (𝓟 𝔐))
                  (𝑎𝑙𝑔 : (⅀ ²) 𝓐 ⇾̣₂ 𝓐)
                  (φ : 𝓟 ⇾̣₂ 𝓐)
                  (χ : ∥_∥ ⇾̣₂ 〖 𝓐 , 𝓐 〗²)
-                 (𝑏𝑜𝑥 : {Ψ : Ctx} → (K₀ Ψ ²) 𝓐 ⇾̣₂ (δ₀ Ψ ²) 𝓐) where
+                 (𝑏𝑜𝑥 : {Ψ : Ctx} → (K Ψ ²) 𝓐 ⇾̣₂ (δbox Ψ ²) 𝓐)
   private
     open module - {𝔐} = Coalgₚ (𝓟ᴮ {𝔐})
 
@@ -74,7 +75,7 @@ module Traversal (𝓟ᴮ : {𝔐 : MCtx} → Coalgₚ (𝓟 𝔐))
        → 𝕥𝕣𝕒𝕧 (𝕒𝕝𝕘 t) σ ≡ 𝑎𝑙𝑔 (str 𝓟ᴮ (𝓐 𝔐) (⅀₁ 𝕥𝕣𝕒𝕧 t) σ)
   𝕥⟨𝕒⟩ {σ = σ} = cong (λ - → - σ) ⟨𝕒⟩
 
-  𝕥⟨𝕓⟩ : {𝔐 : MCtx}{σ : Γ ~[ 𝓟 𝔐 ]↝ Δ}{b : K₀ Ψ (𝕋 𝔐) α Γ}
+  𝕥⟨𝕓⟩ : {𝔐 : MCtx}{σ : Γ ~[ 𝓟 𝔐 ]↝ Δ}{b : K Ψ (𝕋 𝔐) α Γ}
         → 𝕥𝕣𝕒𝕧 (𝕓𝕠𝕩 b) σ ≡ 𝑏𝑜𝑥 (𝕥𝕣𝕒𝕧 b η)
   𝕥⟨𝕓⟩ {σ = σ} = cong (λ - → - σ) ⟨𝕓⟩
 
@@ -111,7 +112,7 @@ record MapEq₀ (𝓐 : Family₂)(f g : 𝕋 ⇾̣₂ 𝓐) : Set where
          → f (𝕞𝕧𝕒𝕣 𝔪 ε) ≡ 𝑚𝑣𝑎𝑟 𝔪 (f ∘ ε)
     f⟨𝑎⟩ : {𝔐 : MCtx}{t : ⅀ (𝕋 𝔐) α Γ}
          → f (𝕒𝕝𝕘 t) ≡ 𝑎𝑙𝑔 (⅀₁ f t)
-    f⟨𝑏⟩ : {𝔐 : MCtx}{b : K₀ Ψ (𝕋 𝔐) α Γ}
+    f⟨𝑏⟩ : {𝔐 : MCtx}{b : K Ψ (𝕋 𝔐) α Γ}
          → f (𝕓𝕠𝕩 b) ≡ 𝑏𝑜𝑥 {Γ = Γ} (f b)
     g⟨𝑣⟩ : {𝔐 : MCtx}{x : ℐ α Γ}
          → g (𝕧𝕒𝕣 x) ≡ 𝑣𝑎𝑟 {𝔐} x
@@ -119,7 +120,7 @@ record MapEq₀ (𝓐 : Family₂)(f g : 𝕋 ⇾̣₂ 𝓐) : Set where
          → g (𝕞𝕧𝕒𝕣 𝔪 ε) ≡ 𝑚𝑣𝑎𝑟 𝔪 (g ∘ ε)
     g⟨𝑎⟩ : {𝔐 : MCtx}{t : ⅀ (𝕋 𝔐) α Γ}
          → g (𝕒𝕝𝕘 t) ≡ 𝑎𝑙𝑔 (⅀₁ g t)
-    g⟨𝑏⟩ : {𝔐 : MCtx}{b : K₀ Ψ (𝕋 𝔐) α Γ}
+    g⟨𝑏⟩ : {𝔐 : MCtx}{b : K Ψ (𝕋 𝔐) α Γ}
          → g (𝕓𝕠𝕩 b) ≡ 𝑏𝑜𝑥 {Γ = Γ} (g b)
 
   fᵃ : MetaAlg⇒ 𝕋ᵃ ᵃ f
@@ -132,7 +133,7 @@ record MapEq₀ (𝓐 : Family₂)(f g : 𝕋 ⇾̣₂ 𝓐) : Set where
 
 record MapEq₁ (𝓟ᴮ : {𝔐 : MCtx} → Coalgₚ (𝓟 𝔐))
               (𝑎𝑙𝑔 : (⅀ ²) 𝓐 ⇾̣₂ 𝓐)
-              (𝑏𝑜𝑥 : {Ψ : Ctx} → (K₀ Ψ ²) 𝓐 ⇾̣₂ (δ₀ Ψ ²) 𝓐)
+              (𝑏𝑜𝑥 : {Ψ : Ctx} → (K Ψ ²) 𝓐 ⇾̣₂ (δbox Ψ ²) 𝓐)
               (f g : 𝕋 ⇾̣₂ 〖 𝓟 , 𝓐 〗²) : Set where
   field
     φ : 𝓟 ⇾̣₂ 𝓐
@@ -150,7 +151,7 @@ record MapEq₁ (𝓟ᴮ : {𝔐 : MCtx} → Coalgₚ (𝓟 𝔐))
          → f (𝕞𝕧𝕒𝕣 𝔪 ε) σ ≡ χ 𝔪 (λ p → f (ε p) σ)
     f⟨𝑎⟩ : {𝔐 : MCtx}{σ : Γ ~[ 𝓟 𝔐 ]↝ Δ}{t : ⅀ (𝕋 𝔐) α Γ}
          → f (𝕒𝕝𝕘 t) σ ≡ 𝑎𝑙𝑔 (str 𝓟ᴮ (𝓐 𝔐) (⅀₁ f t) σ)
-    f⟨𝑏⟩ : {𝔐 : MCtx}{σ : Γ ~[ 𝓟 𝔐 ]↝ Δ}{b : K₀ Ψ (𝕋 𝔐) α Γ}
+    f⟨𝑏⟩ : {𝔐 : MCtx}{σ : Γ ~[ 𝓟 𝔐 ]↝ Δ}{b : K Ψ (𝕋 𝔐) α Γ}
          → f (𝕓𝕠𝕩 b) σ ≡ 𝑏𝑜𝑥 (f b η)
     g⟨𝑣⟩ : {𝔐 : MCtx}{σ : Γ ~[ 𝓟 𝔐 ]↝ Δ}{x : ℐ α Γ}
          → g (𝕧𝕒𝕣 x) σ ≡ φ (σ x)
@@ -158,7 +159,7 @@ record MapEq₁ (𝓟ᴮ : {𝔐 : MCtx} → Coalgₚ (𝓟 𝔐))
          → g (𝕞𝕧𝕒𝕣 𝔪 ε) σ ≡ χ 𝔪 (λ p → g (ε p) σ)
     g⟨𝑎⟩ : {𝔐 : MCtx}{σ : Γ ~[ 𝓟 𝔐 ]↝ Δ}{t : ⅀ (𝕋 𝔐) α Γ}
          → g (𝕒𝕝𝕘 t) σ ≡ 𝑎𝑙𝑔 (str 𝓟ᴮ (𝓐 𝔐) (⅀₁ g t) σ)
-    g⟨𝑏⟩ : {𝔐 : MCtx}{σ : Γ ~[ 𝓟 𝔐 ]↝ Δ}{b : K₀ Ψ (𝕋 𝔐) α Γ}
+    g⟨𝑏⟩ : {𝔐 : MCtx}{σ : Γ ~[ 𝓟 𝔐 ]↝ Δ}{b : K Ψ (𝕋 𝔐) α Γ}
          → g (𝕓𝕠𝕩 b) σ ≡ 𝑏𝑜𝑥 (g b η)
 
   fᵃ : MetaAlg⇒ 𝕋ᵃ Travᵃ f
@@ -172,7 +173,7 @@ record MapEq₁ (𝓟ᴮ : {𝔐 : MCtx} → Coalgₚ (𝓟 𝔐))
 record MapEq₂ (𝓟ᴮ : {𝔐 : MCtx} → Coalgₚ (𝓟 𝔐))
               (𝓠ᴮ : {𝔐 : MCtx} → Coalgₚ (𝓠 𝔐))
               (𝑎𝑙𝑔 : (⅀ ²) 𝓐 ⇾̣₂ 𝓐)
-              (𝑏𝑜𝑥 : {Ψ : Ctx} → (K₀ Ψ ²) 𝓐 ⇾̣₂ (δ₀ Ψ ²) 𝓐)
+              (𝑏𝑜𝑥 : {Ψ : Ctx} → (K Ψ ²) 𝓐 ⇾̣₂ (δbox Ψ ²) 𝓐)
               (f g : 𝕋 ⇾̣₂ 〖 𝓟 , 〖 𝓠 , 𝓐 〗² 〗²) : Set where
   field
     φ : 𝓠 ⇾̣₂ 𝓐
@@ -192,7 +193,7 @@ record MapEq₂ (𝓟ᴮ : {𝔐 : MCtx} → Coalgₚ (𝓟 𝔐))
          → f (𝕞𝕧𝕒𝕣 𝔪 ε) σ ς ≡ χ 𝔪 (λ 𝔫 → f (ε 𝔫) σ ς)
     f⟨𝑎⟩ : {𝔐 : MCtx}{σ : Γ ~[ 𝓟 𝔐 ]↝ Δ}{ς : Δ ~[ 𝓠 𝔐 ]↝ Θ}{t : ⅀ (𝕋 𝔐) α Γ}
          → f (𝕒𝕝𝕘 t) σ ς ≡ 𝑎𝑙𝑔 (str 𝓠ᴮ (𝓐 𝔐) (str 𝓟ᴮ (〖 𝓠 , 𝓐 〗² 𝔐) (⅀₁ f t) σ) ς)
-    f⟨𝑏⟩ : {𝔐 : MCtx}{σ : Γ ~[ 𝓟 𝔐 ]↝ Δ}{ς : Δ ~[ 𝓠 𝔐 ]↝ Θ}{b : K₀ Ψ (𝕋 𝔐) α Γ}
+    f⟨𝑏⟩ : {𝔐 : MCtx}{σ : Γ ~[ 𝓟 𝔐 ]↝ Δ}{ς : Δ ~[ 𝓠 𝔐 ]↝ Θ}{b : K Ψ (𝕋 𝔐) α Γ}
          → f (𝕓𝕠𝕩 b) σ ς ≡ 𝑏𝑜𝑥 (f b 𝓟η 𝓠η)
     g⟨𝑣⟩ : {𝔐 : MCtx}{σ : Γ ~[ 𝓟 𝔐 ]↝ Δ}{ς : Δ ~[ 𝓠 𝔐 ]↝ Θ}{x : ℐ α Γ}
          → g (𝕧𝕒𝕣 x) σ ς ≡ ϕ (σ x) ς
@@ -200,7 +201,7 @@ record MapEq₂ (𝓟ᴮ : {𝔐 : MCtx} → Coalgₚ (𝓟 𝔐))
          → g (𝕞𝕧𝕒𝕣 𝔪 ε) σ ς ≡ χ 𝔪 (λ 𝔫 → g (ε 𝔫) σ ς)
     g⟨𝑎⟩ : {𝔐 : MCtx}{σ : Γ ~[ 𝓟 𝔐 ]↝ Δ}{ς : Δ ~[ 𝓠 𝔐 ]↝ Θ}{t : ⅀ (𝕋 𝔐) α Γ}
          → g (𝕒𝕝𝕘 t) σ ς ≡ 𝑎𝑙𝑔 (str 𝓠ᴮ (𝓐 𝔐) (str 𝓟ᴮ (〖 𝓠 , 𝓐 〗² 𝔐) (⅀₁ g t) σ) ς)
-    g⟨𝑏⟩ : {𝔐 : MCtx}{σ : Γ ~[ 𝓟 𝔐 ]↝ Δ}{ς : Δ ~[ 𝓠 𝔐 ]↝ Θ}{b : K₀ Ψ (𝕋 𝔐) α Γ}
+    g⟨𝑏⟩ : {𝔐 : MCtx}{σ : Γ ~[ 𝓟 𝔐 ]↝ Δ}{ς : Δ ~[ 𝓠 𝔐 ]↝ Θ}{b : K Ψ (𝕋 𝔐) α Γ}
          → g (𝕓𝕠𝕩 b) σ ς ≡ 𝑏𝑜𝑥 (g b 𝓟η 𝓠η)
 
   fᵃ : MetaAlg⇒ 𝕋ᵃ Travᵃ f
