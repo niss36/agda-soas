@@ -100,8 +100,9 @@ module _ where
         𝑎𝑙𝑔 = λ {𝔐} → ppAlg {𝔐}
       ; 𝑣𝑎𝑟 = λ {𝔐} → ppVar {𝔐}
       ; 𝑚𝑣𝑎𝑟 = λ {𝔐} → ppMvar {𝔐}
-      ; 𝑏𝑜𝑥 = λ {Ψ} → λ{ (pp , m , n) → "box(" ++ (showCtx n Ψ) ++ ". " ++ pp ++ ")" , m , n + len Ψ }
-      ; 𝑙𝑒𝑡𝑏𝑜𝑥 = λ { (Ψ , α , (fst , fm , fn) , (snd , sm , sn)) → "letbox(" ++ fst ++ ", " ++ "𝔪" ++ (showNat sm) ++ ": " ++ (showCtx sn Ψ) ++ "⊩" ++ (showT sn α) ++ ". " ++ snd ++ ")" , fm Data.Nat.⊔ (suc sm) , fn Data.Nat.⊔ sn } }
+      ; 𝑏𝑜𝑥 = λ{ (Ψ , α , eq , (pp , m , n)) → "box(" ++ (showCtx n Ψ) ++ ". " ++ pp ++ ")" , m , n + len Ψ }
+      -- ; 𝑙𝑒𝑡𝑏𝑜𝑥 = λ { (Ψ , α , (fst , fm , fn) , (snd , sm , sn)) → "letbox(" ++ fst ++ ", " ++ "𝔪" ++ (showNat sm) ++ ": " ++ (showCtx sn Ψ) ++ "⊩" ++ (showT sn α) ++ ". " ++ snd ++ ")" , fm Data.Nat.⊔ (suc sm) , fn Data.Nat.⊔ sn }
+      }
 
   open Semantics
 

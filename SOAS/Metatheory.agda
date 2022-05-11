@@ -16,7 +16,8 @@ open Syntax Syn
 open CompatStrengths ⅀:CS public renaming (CoalgStr to ⅀:Str ; ExpStr to ⅀:ExpStr)
 
 open import SOAS.Metatheory.Algebra ⅀F public
-open import SOAS.Metatheory.Monoid ⅀F ⅀:Str public
+open import SOAS.Metatheory.Contextual [_]_ public
+open import SOAS.Metatheory.Monoid [_]_ ⅀F ⅀:Str public
 
 module Theory where
   open import SOAS.Metatheory.MetaAlgebra   [_]_ ⅀F public

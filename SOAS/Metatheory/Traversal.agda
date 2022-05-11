@@ -32,26 +32,28 @@ private
     α β : T
     𝓟 𝓠 𝓐 : Family₂
 
-
 -- Parametrised interpretation into an internal hom
 module Traversal (𝓟ᴮ : {𝔐 : MCtx} → Coalgₚ (𝓟 𝔐))
                  (𝑎𝑙𝑔 : (⅀ ²) 𝓐 ⇾̣₂ 𝓐)
                  (φ : 𝓟 ⇾̣₂ 𝓐)
                  (χ : ∥_∥ ⇾̣₂ 〖 𝓐 , 𝓐 〗²)
-                 (𝑏𝑜𝑥 : {Ψ : Ctx} → (K Ψ ²) 𝓐 ⇾̣₂ (δbox Ψ ²) 𝓐)
+                 (𝑏𝑜𝑥 : (B ²) 𝓐 ⇾̣₂ 𝓐)
+                 --(𝑙𝑒𝑡𝑏𝑜𝑥 : LB 𝓐 ⇾̣₂ 𝓐)
+                 where
   private
     open module - {𝔐} = Coalgₚ (𝓟ᴮ {𝔐})
 
   -- Under the assumptions 𝓐 and 〖 𝓟 , 𝓐 〗 are both meta-algebras
   𝓐ᵃ : MetaAlg 𝓐
-  𝓐ᵃ = record { 𝑎𝑙𝑔 = 𝑎𝑙𝑔 ; 𝑣𝑎𝑟 = λ x → φ (η x) ; 𝑚𝑣𝑎𝑟 = χ ; 𝑏𝑜𝑥 = 𝑏𝑜𝑥 }
+  𝓐ᵃ = record { 𝑎𝑙𝑔 = 𝑎𝑙𝑔 ; 𝑣𝑎𝑟 = λ x → φ (η x) ; 𝑚𝑣𝑎𝑟 = χ ; 𝑏𝑜𝑥 = 𝑏𝑜𝑥 } --; 𝑙𝑒𝑡𝑏𝑜𝑥 = 𝑙𝑒𝑡𝑏𝑜𝑥 }
 
   Travᵃ : MetaAlg 〖 𝓟 , 𝓐 〗²
   Travᵃ = record
     { 𝑎𝑙𝑔  = λ {𝔐} t σ → 𝑎𝑙𝑔 (str 𝓟ᴮ (𝓐 𝔐) t σ)
     ; 𝑣𝑎𝑟  = λ x σ → φ (σ x)
     ; 𝑚𝑣𝑎𝑟 = λ 𝔪 ε σ → χ 𝔪 (λ 𝔫 → ε 𝔫 σ)
-    ; 𝑏𝑜𝑥 = λ t σ → 𝑏𝑜𝑥 (t η)
+    ; 𝑏𝑜𝑥 = λ {𝔐} t σ → 𝑏𝑜𝑥 (BF:Str.str 𝓟ᴮ (𝓐 𝔐) t σ)
+    -- ; 𝑙𝑒𝑡𝑏𝑜𝑥 = λ{ (Ψ , α , fst , snd) σ → 𝑙𝑒𝑡𝑏𝑜𝑥 (Ψ , α , fst σ , {! snd  !} ) }
     }
 
   -- 〖 𝓟 , 𝓐 〗 is also a pointed □-coalgebra
@@ -75,9 +77,12 @@ module Traversal (𝓟ᴮ : {𝔐 : MCtx} → Coalgₚ (𝓟 𝔐))
        → 𝕥𝕣𝕒𝕧 (𝕒𝕝𝕘 t) σ ≡ 𝑎𝑙𝑔 (str 𝓟ᴮ (𝓐 𝔐) (⅀₁ 𝕥𝕣𝕒𝕧 t) σ)
   𝕥⟨𝕒⟩ {σ = σ} = cong (λ - → - σ) ⟨𝕒⟩
 
-  𝕥⟨𝕓⟩ : {𝔐 : MCtx}{σ : Γ ~[ 𝓟 𝔐 ]↝ Δ}{b : K Ψ (𝕋 𝔐) α Γ}
-        → 𝕥𝕣𝕒𝕧 (𝕓𝕠𝕩 b) σ ≡ 𝑏𝑜𝑥 (𝕥𝕣𝕒𝕧 b η)
+  𝕥⟨𝕓⟩ : {𝔐 : MCtx}{σ : Γ ~[ 𝓟 𝔐 ]↝ Δ}{b : B (𝕋 𝔐) α Γ}
+        → 𝕥𝕣𝕒𝕧 (𝕓𝕠𝕩 b) σ ≡ 𝑏𝑜𝑥 (BF:Str.str 𝓟ᴮ (𝓐 𝔐) (B₁ 𝕥𝕣𝕒𝕧 {α}{Γ} b) σ)
   𝕥⟨𝕓⟩ {σ = σ} = cong (λ - → - σ) ⟨𝕓⟩
+
+  -- 𝕥⟨𝕝⟩ : {!   !}
+  -- 𝕥⟨𝕝⟩ = {!   !}
 
   -- Congruence in the two arguments of 𝕥𝕣𝕒𝕧
   𝕥≈₁ : {𝔐 : MCtx}{σ : Γ ~[ 𝓟 𝔐 ]↝ Δ}{t₁ t₂ : 𝕋 𝔐 α Γ} → t₁ ≡ t₂ → 𝕥𝕣𝕒𝕧 t₁ σ ≡ 𝕥𝕣𝕒𝕧 t₂ σ
@@ -91,7 +96,7 @@ module Traversal (𝓟ᴮ : {𝔐 : MCtx} → Coalgₚ (𝓟 𝔐))
 
 -- A pointed meta-Λ-algebra induces 𝕒𝕝𝕘 traversal into □ 𝓐
 module □Traversal {𝓐} (𝓐ᵃ : MetaAlg 𝓐) =
-  Traversal ℐᴮ (MetaAlg.𝑎𝑙𝑔 𝓐ᵃ) (MetaAlg.𝑣𝑎𝑟 𝓐ᵃ) (MetaAlg.𝑚𝑣𝑎𝑟 𝓐ᵃ) (MetaAlg.𝑏𝑜𝑥 𝓐ᵃ)
+  Traversal ℐᴮ (MetaAlg.𝑎𝑙𝑔 𝓐ᵃ) (MetaAlg.𝑣𝑎𝑟 𝓐ᵃ) (MetaAlg.𝑚𝑣𝑎𝑟 𝓐ᵃ) (MetaAlg.𝑏𝑜𝑥 𝓐ᵃ) --(MetaAlg.𝑙𝑒𝑡𝑏𝑜𝑥 𝓐ᵃ)
 
 -- Corollary: □ lifts to an endofunctor on pointed meta-Λ-algebras
 □ᵃ : (𝓐ᵃ : MetaAlg 𝓐) → MetaAlg ((□ ²) 𝓐)
@@ -112,37 +117,37 @@ record MapEq₀ (𝓐 : Family₂)(f g : 𝕋 ⇾̣₂ 𝓐) : Set where
          → f (𝕞𝕧𝕒𝕣 𝔪 ε) ≡ 𝑚𝑣𝑎𝑟 𝔪 (f ∘ ε)
     f⟨𝑎⟩ : {𝔐 : MCtx}{t : ⅀ (𝕋 𝔐) α Γ}
          → f (𝕒𝕝𝕘 t) ≡ 𝑎𝑙𝑔 (⅀₁ f t)
-    f⟨𝑏⟩ : {𝔐 : MCtx}{b : K Ψ (𝕋 𝔐) α Γ}
-         → f (𝕓𝕠𝕩 b) ≡ 𝑏𝑜𝑥 {Γ = Γ} (f b)
+    f⟨𝑏⟩ : {𝔐 : MCtx}{b : B (𝕋 𝔐) α Γ}
+         → f (𝕓𝕠𝕩 b) ≡ 𝑏𝑜𝑥 {Γ = Γ} (B₁ f {α}{Γ} b)
+    -- f⟨𝑙⟩ : {𝔐 : MCtx}{lb : LB 𝕋 𝔐 α Γ} → f (𝕝𝕖𝕥𝕓𝕠𝕩 lb) ≡ 𝑙𝑒𝑡𝑏𝑜𝑥 (LB₁ f lb)
     g⟨𝑣⟩ : {𝔐 : MCtx}{x : ℐ α Γ}
          → g (𝕧𝕒𝕣 x) ≡ 𝑣𝑎𝑟 {𝔐} x
     g⟨𝑚⟩ : {𝔐 : MCtx}{𝔪 : Π ⊩ α ∈ 𝔐}{ε : Π ~[ 𝕋 𝔐 ]↝ Γ}
          → g (𝕞𝕧𝕒𝕣 𝔪 ε) ≡ 𝑚𝑣𝑎𝑟 𝔪 (g ∘ ε)
     g⟨𝑎⟩ : {𝔐 : MCtx}{t : ⅀ (𝕋 𝔐) α Γ}
          → g (𝕒𝕝𝕘 t) ≡ 𝑎𝑙𝑔 (⅀₁ g t)
-    g⟨𝑏⟩ : {𝔐 : MCtx}{b : K Ψ (𝕋 𝔐) α Γ}
-         → g (𝕓𝕠𝕩 b) ≡ 𝑏𝑜𝑥 {Γ = Γ} (g b)
+    g⟨𝑏⟩ : {𝔐 : MCtx}{b : B (𝕋 𝔐) α Γ}
+         → g (𝕓𝕠𝕩 b) ≡ 𝑏𝑜𝑥 {Γ = Γ} (B₁ g {α}{Γ} b)
+    -- g⟨𝑙⟩ : {𝔐 : MCtx}{lb : LB 𝕋 𝔐 α Γ} → g (𝕝𝕖𝕥𝕓𝕠𝕩 lb) ≡ 𝑙𝑒𝑡𝑏𝑜𝑥 (LB₁ g lb)
 
   fᵃ : MetaAlg⇒ 𝕋ᵃ ᵃ f
-  fᵃ = record { ⟨𝑎𝑙𝑔⟩ =  f⟨𝑎⟩ ; ⟨𝑣𝑎𝑟⟩ =  f⟨𝑣⟩ ; ⟨𝑚𝑣𝑎𝑟⟩ =  f⟨𝑚⟩ ; ⟨𝑏𝑜𝑥⟩ = f⟨𝑏⟩ }
+  fᵃ = record { ⟨𝑎𝑙𝑔⟩ =  f⟨𝑎⟩ ; ⟨𝑣𝑎𝑟⟩ =  f⟨𝑣⟩ ; ⟨𝑚𝑣𝑎𝑟⟩ =  f⟨𝑚⟩ ; ⟨𝑏𝑜𝑥⟩ = f⟨𝑏⟩ }-- ; ⟨𝑙𝑒𝑡𝑏𝑜𝑥⟩ = f⟨𝑙⟩ }
   gᵃ : MetaAlg⇒ 𝕋ᵃ ᵃ g
-  gᵃ = record { ⟨𝑎𝑙𝑔⟩ =  g⟨𝑎⟩ ; ⟨𝑣𝑎𝑟⟩ =  g⟨𝑣⟩ ; ⟨𝑚𝑣𝑎𝑟⟩ =  g⟨𝑚⟩ ; ⟨𝑏𝑜𝑥⟩ = g⟨𝑏⟩ }
+  gᵃ = record { ⟨𝑎𝑙𝑔⟩ =  g⟨𝑎⟩ ; ⟨𝑣𝑎𝑟⟩ =  g⟨𝑣⟩ ; ⟨𝑚𝑣𝑎𝑟⟩ =  g⟨𝑚⟩ ; ⟨𝑏𝑜𝑥⟩ = g⟨𝑏⟩ }-- ; ⟨𝑙𝑒𝑡𝑏𝑜𝑥⟩ = g⟨𝑙⟩ }
 
   ≈ : {𝔐 : MCtx}(t : 𝕋 𝔐 α Γ) → f t ≡ g t
   ≈ t = eq fᵃ gᵃ t
 
 record MapEq₁ (𝓟ᴮ : {𝔐 : MCtx} → Coalgₚ (𝓟 𝔐))
               (𝑎𝑙𝑔 : (⅀ ²) 𝓐 ⇾̣₂ 𝓐)
-              (𝑏𝑜𝑥 : {Ψ : Ctx} → (K Ψ ²) 𝓐 ⇾̣₂ (δbox Ψ ²) 𝓐)
+              (𝑏𝑜𝑥 : (B ²) 𝓐 ⇾̣₂ 𝓐)
+              -- (𝑙𝑒𝑡𝑏𝑜𝑥 : LB 𝓐 ⇾̣₂ 𝓐)
               (f g : 𝕋 ⇾̣₂ 〖 𝓟 , 𝓐 〗²) : Set where
   field
     φ : 𝓟 ⇾̣₂ 𝓐
     χ : ∥_∥ ⇾̣₂ 〖 𝓐 , 𝓐 〗²
 
-  open Traversal 𝓟ᴮ 𝑎𝑙𝑔 φ χ 𝑏𝑜𝑥
-
-  private
-    open module - {𝔐} = Coalgₚ (𝓟ᴮ {𝔐})
+  open Traversal 𝓟ᴮ 𝑎𝑙𝑔 φ χ 𝑏𝑜𝑥 --𝑙𝑒𝑡𝑏𝑜𝑥
 
   field
     f⟨𝑣⟩ : {𝔐 : MCtx}{σ : Γ ~[ 𝓟 𝔐 ]↝ Δ}{x : ℐ α Γ}
@@ -151,21 +156,23 @@ record MapEq₁ (𝓟ᴮ : {𝔐 : MCtx} → Coalgₚ (𝓟 𝔐))
          → f (𝕞𝕧𝕒𝕣 𝔪 ε) σ ≡ χ 𝔪 (λ p → f (ε p) σ)
     f⟨𝑎⟩ : {𝔐 : MCtx}{σ : Γ ~[ 𝓟 𝔐 ]↝ Δ}{t : ⅀ (𝕋 𝔐) α Γ}
          → f (𝕒𝕝𝕘 t) σ ≡ 𝑎𝑙𝑔 (str 𝓟ᴮ (𝓐 𝔐) (⅀₁ f t) σ)
-    f⟨𝑏⟩ : {𝔐 : MCtx}{σ : Γ ~[ 𝓟 𝔐 ]↝ Δ}{b : K Ψ (𝕋 𝔐) α Γ}
-         → f (𝕓𝕠𝕩 b) σ ≡ 𝑏𝑜𝑥 (f b η)
+    f⟨𝑏⟩ : {𝔐 : MCtx}{σ : Γ ~[ 𝓟 𝔐 ]↝ Δ}{b : B (𝕋 𝔐) α Γ}
+         → f (𝕓𝕠𝕩 b) σ ≡ 𝑏𝑜𝑥 (BF:Str.str 𝓟ᴮ (𝓐 𝔐) (B₁ f {α}{Γ} b) σ)
+    -- f⟨𝑙⟩ : {!   !}
     g⟨𝑣⟩ : {𝔐 : MCtx}{σ : Γ ~[ 𝓟 𝔐 ]↝ Δ}{x : ℐ α Γ}
          → g (𝕧𝕒𝕣 x) σ ≡ φ (σ x)
     g⟨𝑚⟩ : {𝔐 : MCtx}{σ : Γ ~[ 𝓟 𝔐 ]↝ Δ}{𝔪 : Π ⊩ α ∈ 𝔐}{ε : Π ~[ 𝕋 𝔐 ]↝ Γ}
          → g (𝕞𝕧𝕒𝕣 𝔪 ε) σ ≡ χ 𝔪 (λ p → g (ε p) σ)
     g⟨𝑎⟩ : {𝔐 : MCtx}{σ : Γ ~[ 𝓟 𝔐 ]↝ Δ}{t : ⅀ (𝕋 𝔐) α Γ}
          → g (𝕒𝕝𝕘 t) σ ≡ 𝑎𝑙𝑔 (str 𝓟ᴮ (𝓐 𝔐) (⅀₁ g t) σ)
-    g⟨𝑏⟩ : {𝔐 : MCtx}{σ : Γ ~[ 𝓟 𝔐 ]↝ Δ}{b : K Ψ (𝕋 𝔐) α Γ}
-         → g (𝕓𝕠𝕩 b) σ ≡ 𝑏𝑜𝑥 (g b η)
+    g⟨𝑏⟩ : {𝔐 : MCtx}{σ : Γ ~[ 𝓟 𝔐 ]↝ Δ}{b : B (𝕋 𝔐) α Γ}
+         → g (𝕓𝕠𝕩 b) σ ≡ 𝑏𝑜𝑥 (BF:Str.str 𝓟ᴮ (𝓐 𝔐) (B₁ g {α}{Γ} b) σ)
+    -- g⟨𝑙⟩ : {!   !}
 
   fᵃ : MetaAlg⇒ 𝕋ᵃ Travᵃ f
-  fᵃ = record { ⟨𝑎𝑙𝑔⟩ = dext′ f⟨𝑎⟩ ; ⟨𝑣𝑎𝑟⟩ = dext′ f⟨𝑣⟩ ; ⟨𝑚𝑣𝑎𝑟⟩ = dext′ f⟨𝑚⟩ ; ⟨𝑏𝑜𝑥⟩ = dext′ f⟨𝑏⟩ }
+  fᵃ = record { ⟨𝑎𝑙𝑔⟩ = dext′ f⟨𝑎⟩ ; ⟨𝑣𝑎𝑟⟩ = dext′ f⟨𝑣⟩ ; ⟨𝑚𝑣𝑎𝑟⟩ = dext′ f⟨𝑚⟩ ; ⟨𝑏𝑜𝑥⟩ = dext′ f⟨𝑏⟩ }-- ; ⟨𝑙𝑒𝑡𝑏𝑜𝑥⟩ = dext′ {!   !} }
   gᵃ : MetaAlg⇒ 𝕋ᵃ Travᵃ g
-  gᵃ = record { ⟨𝑎𝑙𝑔⟩ = dext′ g⟨𝑎⟩ ; ⟨𝑣𝑎𝑟⟩ = dext′ g⟨𝑣⟩ ; ⟨𝑚𝑣𝑎𝑟⟩ = dext′ g⟨𝑚⟩ ; ⟨𝑏𝑜𝑥⟩ = dext′ g⟨𝑏⟩ }
+  gᵃ = record { ⟨𝑎𝑙𝑔⟩ = dext′ g⟨𝑎⟩ ; ⟨𝑣𝑎𝑟⟩ = dext′ g⟨𝑣⟩ ; ⟨𝑚𝑣𝑎𝑟⟩ = dext′ g⟨𝑚⟩ ; ⟨𝑏𝑜𝑥⟩ = dext′ g⟨𝑏⟩ }-- ; ⟨𝑙𝑒𝑡𝑏𝑜𝑥⟩ = dext′ {!   !} }
 
   ≈ : {𝔐 : MCtx}{σ : Γ ~[ 𝓟 𝔐 ]↝ Δ}(t : 𝕋 𝔐 α Γ) → f t σ ≡ g t σ
   ≈ {σ = σ} t = cong (λ - → - σ) (eq fᵃ gᵃ t)
@@ -173,18 +180,15 @@ record MapEq₁ (𝓟ᴮ : {𝔐 : MCtx} → Coalgₚ (𝓟 𝔐))
 record MapEq₂ (𝓟ᴮ : {𝔐 : MCtx} → Coalgₚ (𝓟 𝔐))
               (𝓠ᴮ : {𝔐 : MCtx} → Coalgₚ (𝓠 𝔐))
               (𝑎𝑙𝑔 : (⅀ ²) 𝓐 ⇾̣₂ 𝓐)
-              (𝑏𝑜𝑥 : {Ψ : Ctx} → (K Ψ ²) 𝓐 ⇾̣₂ (δbox Ψ ²) 𝓐)
+              (𝑏𝑜𝑥 : (B ²) 𝓐 ⇾̣₂ 𝓐)
+              -- (𝑙𝑒𝑡𝑏𝑜𝑥 : LB 𝓐 ⇾̣₂ 𝓐)
               (f g : 𝕋 ⇾̣₂ 〖 𝓟 , 〖 𝓠 , 𝓐 〗² 〗²) : Set where
   field
     φ : 𝓠 ⇾̣₂ 𝓐
     ϕ : 𝓟 ⇾̣₂ 〖 𝓠 , 𝓐 〗²
     χ : ∥_∥ ⇾̣₂ 〖 𝓐 , 𝓐 〗²
 
-  private
-    open module P {𝔐} = Coalgₚ (𝓟ᴮ {𝔐}) renaming (η to 𝓟η)
-    open module Q {𝔐} = Coalgₚ (𝓠ᴮ {𝔐}) renaming (η to 𝓠η)
-
-  open Traversal 𝓟ᴮ (Traversal.𝓐.𝑎𝑙𝑔 𝓠ᴮ 𝑎𝑙𝑔 φ χ 𝑏𝑜𝑥) ϕ (λ 𝔪 ε σ → χ 𝔪 (λ 𝔫 → ε 𝔫 σ)) (λ b σ → 𝑏𝑜𝑥 (b 𝓠η))
+  open Traversal 𝓟ᴮ (Traversal.𝓐.𝑎𝑙𝑔 𝓠ᴮ 𝑎𝑙𝑔 φ χ 𝑏𝑜𝑥) ϕ (λ 𝔪 ε σ → χ 𝔪 (λ 𝔫 → ε 𝔫 σ)) (Traversal.𝓐.𝑏𝑜𝑥 𝓠ᴮ 𝑎𝑙𝑔 φ χ 𝑏𝑜𝑥)
 
   field
     f⟨𝑣⟩ : {𝔐 : MCtx}{σ : Γ ~[ 𝓟 𝔐 ]↝ Δ}{ς : Δ ~[ 𝓠 𝔐 ]↝ Θ}{x : ℐ α Γ}
@@ -193,23 +197,25 @@ record MapEq₂ (𝓟ᴮ : {𝔐 : MCtx} → Coalgₚ (𝓟 𝔐))
          → f (𝕞𝕧𝕒𝕣 𝔪 ε) σ ς ≡ χ 𝔪 (λ 𝔫 → f (ε 𝔫) σ ς)
     f⟨𝑎⟩ : {𝔐 : MCtx}{σ : Γ ~[ 𝓟 𝔐 ]↝ Δ}{ς : Δ ~[ 𝓠 𝔐 ]↝ Θ}{t : ⅀ (𝕋 𝔐) α Γ}
          → f (𝕒𝕝𝕘 t) σ ς ≡ 𝑎𝑙𝑔 (str 𝓠ᴮ (𝓐 𝔐) (str 𝓟ᴮ (〖 𝓠 , 𝓐 〗² 𝔐) (⅀₁ f t) σ) ς)
-    f⟨𝑏⟩ : {𝔐 : MCtx}{σ : Γ ~[ 𝓟 𝔐 ]↝ Δ}{ς : Δ ~[ 𝓠 𝔐 ]↝ Θ}{b : K Ψ (𝕋 𝔐) α Γ}
-         → f (𝕓𝕠𝕩 b) σ ς ≡ 𝑏𝑜𝑥 (f b 𝓟η 𝓠η)
+    f⟨𝑏⟩ : {𝔐 : MCtx}{σ : Γ ~[ 𝓟 𝔐 ]↝ Δ}{ς : Δ ~[ 𝓠 𝔐 ]↝ Θ}{b : B (𝕋 𝔐) α Γ}
+         → f (𝕓𝕠𝕩 b) σ ς ≡ 𝑏𝑜𝑥 (BF:Str.str 𝓠ᴮ (𝓐 𝔐) (BF:Str.str 𝓟ᴮ (〖 𝓠 , 𝓐 〗² 𝔐) (B₁ f {α}{Γ} b) σ) ς)
+    -- f⟨𝑙⟩ : {!   !}
     g⟨𝑣⟩ : {𝔐 : MCtx}{σ : Γ ~[ 𝓟 𝔐 ]↝ Δ}{ς : Δ ~[ 𝓠 𝔐 ]↝ Θ}{x : ℐ α Γ}
          → g (𝕧𝕒𝕣 x) σ ς ≡ ϕ (σ x) ς
     g⟨𝑚⟩ : {𝔐 : MCtx}{σ : Γ ~[ 𝓟 𝔐 ]↝ Δ}{ς : Δ ~[ 𝓠 𝔐 ]↝ Θ}{𝔪 : Π ⊩ α ∈ 𝔐}{ε : Π ~[ 𝕋 𝔐 ]↝ Γ}
          → g (𝕞𝕧𝕒𝕣 𝔪 ε) σ ς ≡ χ 𝔪 (λ 𝔫 → g (ε 𝔫) σ ς)
     g⟨𝑎⟩ : {𝔐 : MCtx}{σ : Γ ~[ 𝓟 𝔐 ]↝ Δ}{ς : Δ ~[ 𝓠 𝔐 ]↝ Θ}{t : ⅀ (𝕋 𝔐) α Γ}
          → g (𝕒𝕝𝕘 t) σ ς ≡ 𝑎𝑙𝑔 (str 𝓠ᴮ (𝓐 𝔐) (str 𝓟ᴮ (〖 𝓠 , 𝓐 〗² 𝔐) (⅀₁ g t) σ) ς)
-    g⟨𝑏⟩ : {𝔐 : MCtx}{σ : Γ ~[ 𝓟 𝔐 ]↝ Δ}{ς : Δ ~[ 𝓠 𝔐 ]↝ Θ}{b : K Ψ (𝕋 𝔐) α Γ}
-         → g (𝕓𝕠𝕩 b) σ ς ≡ 𝑏𝑜𝑥 (g b 𝓟η 𝓠η)
+    g⟨𝑏⟩ : {𝔐 : MCtx}{σ : Γ ~[ 𝓟 𝔐 ]↝ Δ}{ς : Δ ~[ 𝓠 𝔐 ]↝ Θ}{b : B (𝕋 𝔐) α Γ}
+         → g (𝕓𝕠𝕩 b) σ ς ≡ 𝑏𝑜𝑥 (BF:Str.str 𝓠ᴮ (𝓐 𝔐) (BF:Str.str 𝓟ᴮ (〖 𝓠 , 𝓐 〗² 𝔐) (B₁ g {α}{Γ} b) σ) ς)
+    -- g⟨𝑙⟩ : {!   !}
 
   fᵃ : MetaAlg⇒ 𝕋ᵃ Travᵃ f
   fᵃ = record { ⟨𝑎𝑙𝑔⟩ = dext′ (dext′ f⟨𝑎⟩) ; ⟨𝑣𝑎𝑟⟩ = dext′ (dext′ f⟨𝑣⟩)
-              ; ⟨𝑚𝑣𝑎𝑟⟩ = dext′ (dext′ f⟨𝑚⟩) ; ⟨𝑏𝑜𝑥⟩ = dext′ (dext′ f⟨𝑏⟩) }
+              ; ⟨𝑚𝑣𝑎𝑟⟩ = dext′ (dext′ f⟨𝑚⟩) ; ⟨𝑏𝑜𝑥⟩ = dext′ (dext′ f⟨𝑏⟩) }-- ; ⟨𝑙𝑒𝑡𝑏𝑜𝑥⟩ = dext′ (dext′ {!   !} ) }
   gᵃ : MetaAlg⇒ 𝕋ᵃ Travᵃ g
   gᵃ = record { ⟨𝑎𝑙𝑔⟩ = dext′ (dext′ g⟨𝑎⟩) ; ⟨𝑣𝑎𝑟⟩ = dext′ (dext′ g⟨𝑣⟩)
-              ; ⟨𝑚𝑣𝑎𝑟⟩ = dext′ (dext′ g⟨𝑚⟩) ; ⟨𝑏𝑜𝑥⟩ = dext′ (dext′ g⟨𝑏⟩) }
+              ; ⟨𝑚𝑣𝑎𝑟⟩ = dext′ (dext′ g⟨𝑚⟩) ; ⟨𝑏𝑜𝑥⟩ = dext′ (dext′ g⟨𝑏⟩) }-- ; ⟨𝑙𝑒𝑡𝑏𝑜𝑥⟩ = dext′ (dext′ {!   !} ) }
 
   ≈ : {𝔐 : MCtx}{σ : Γ ~[ 𝓟 𝔐 ]↝ Δ}{ς : Δ ~[ 𝓠 𝔐 ]↝ Θ}(t : 𝕋 𝔐 α Γ) → f t σ ς ≡ g t σ ς
   ≈ {σ = σ}{ς} t = cong (λ - → - σ ς) (eq fᵃ gᵃ t)
@@ -238,7 +244,9 @@ module _ (𝓟ᴮ : {𝔐 : MCtx} → Coalgₚ (𝓟 𝔐))(𝓐ᵃ : MetaAlg �
       ∎))}
     ; ⟨𝑣𝑎𝑟⟩ = λ{ {v = v} → trans 𝕥⟨𝕧⟩ φ∘η≈𝑣𝑎𝑟 }
     ; ⟨𝑚𝑣𝑎𝑟⟩ = λ{ {𝔪}{ε} → 𝕥⟨𝕞⟩ }
-    ; ⟨𝑏𝑜𝑥⟩ = 𝕥⟨𝕓⟩ }) 𝕤𝕖𝕞ᵃ⇒ t
+    ; ⟨𝑏𝑜𝑥⟩ = 𝕥⟨𝕓⟩
+    -- ; ⟨𝑙𝑒𝑡𝑏𝑜𝑥⟩ = {!   !}
+    }) 𝕤𝕖𝕞ᵃ⇒ t
 
 -- Traversal with the point of 𝓟 into 𝕋  is the identity
 𝕥𝕣𝕒𝕧-η≈id : (𝓟ᴮ : {𝔐 : MCtx} → Coalgₚ (𝓟 𝔐))(φ : 𝓟 ⇾̣₂ 𝕋)

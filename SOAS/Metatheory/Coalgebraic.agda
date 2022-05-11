@@ -23,6 +23,7 @@ import SOAS.Abstract.Box as □ ; open □.Sorted
 open import SOAS.Coalgebraic.Map
 
 open import SOAS.Metatheory.Algebra {T} ⅀F
+open import SOAS.Metatheory.Contextual [_]_
 open import SOAS.Metatheory.Semantics [_]_ ⅀F ⅀:Str 𝕋:Init
 open import SOAS.Metatheory.Traversal [_]_ ⅀F ⅀:Str 𝕋:Init
 open import SOAS.Metatheory.Renaming [_]_ ⅀F ⅀:Str 𝕋:Init
@@ -88,7 +89,7 @@ module Travᶜ {𝓟 𝓐 : Family₂}(𝓟ᴮ : {𝔐 : MCtx} → Coalgₚ (�
              (𝑎𝑙𝑔 : (⅀ ²) 𝓐 ⇾̣₂ 𝓐)
              (φ : 𝓟 ⇾̣₂ 𝓐)
              (χ : ∥_∥ ⇾̣₂ 〖 𝓐 , 𝓐 〗²)
-             (𝑏𝑜𝑥 : {Ψ : Ctx} → (K₀ Ψ ²) 𝓐 ⇾̣₂ (δ₀ Ψ ²) 𝓐) where
+             (𝑏𝑜𝑥 : (B ²) 𝓐 ⇾̣₂ 𝓐) where
 
   private
     open module - {𝔐} = Coalgₚ (𝓟ᴮ {𝔐})
@@ -143,7 +144,7 @@ module Travᶜ {𝓟 𝓐 : Family₂}(𝓟ᴮ : {𝔐 : MCtx} → Coalgₚ (�
         ≡˘⟨ congr ⅀.homomorphism (λ - → 𝑎𝑙𝑔 (str ℐᴮ (𝓐 𝔐) (str 𝓟ᴮ (□ (𝓐 𝔐)) - σ) ϱ)) ⟩
             𝑎𝑙𝑔 (str ℐᴮ (𝓐 𝔐)  (str 𝓟ᴮ (□ (𝓐 𝔐)) (⅀₁ (λ{ t σ ϱ → 𝕥𝕣𝕒𝕧 t (λ v → r (σ v) ϱ)}) t) σ) ϱ)
         ∎ }
-      ; g⟨𝑏⟩ = λ{ {b = b} → trans 𝕥⟨𝕓⟩ (cong (𝑏𝑜𝑥 ∘ (𝕥𝕣𝕒𝕧 b)) (dext λ - → sym r∘η)) }
+      ; g⟨𝑏⟩ = λ{ {Γ = Γ}{α = α}{𝔐 = 𝔐}{σ = σ}{ϱ}{b} → trans 𝕥⟨𝕓⟩ (cong 𝑏𝑜𝑥 (BF:Str.str-dist (𝓐 𝔐) (rᶜ 𝓟ᴮ) (B₁ 𝕥𝕣𝕒𝕧 {α}{Γ} b) σ ϱ)) }
       } where open ≡-Reasoning
 
     -- The traversal map 𝕋 ⇾ 〖𝓟, 𝓐〗 is pointed coalgebraic if 𝓐 has coalgebra structure

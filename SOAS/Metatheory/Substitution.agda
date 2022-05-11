@@ -27,6 +27,7 @@ open import SOAS.Coalgebraic.Monoid
 open import SOAS.Coalgebraic.Lift
 
 open import SOAS.Metatheory.Algebra ⅀F
+open import SOAS.Metatheory.Contextual [_]_
 open import SOAS.Metatheory.Semantics [_]_ ⅀F ⅀:Str 𝕋:Init
 open import SOAS.Metatheory.Traversal [_]_ ⅀F ⅀:Str 𝕋:Init
 open import SOAS.Metatheory.Renaming [_]_ ⅀F ⅀:Str 𝕋:Init
@@ -89,7 +90,7 @@ compat {ρ = ρ} t =  begin 𝕣𝕖𝕟 t ρ           ≡˘⟨ 𝕥𝕣𝕒�
     ≡˘⟨ congr ⅀.homomorphism (λ - → 𝕒𝕝𝕘 (str 𝕋ᴮ (𝕋 𝔐) (str 𝕋ᴮ (〖 𝕋 , 𝕋 〗² 𝔐) - σ) ς)) ⟩
         𝕒𝕝𝕘 (str 𝕋ᴮ (𝕋 𝔐) (str 𝕋ᴮ (〖 𝕋 , 𝕋 〗² 𝔐) (⅀₁ (λ{ t σ ς → 𝕤𝕦𝕓 t (λ v → 𝕤𝕦𝕓 (σ v) ς)}) t) σ) ς)
     ∎ }
-  ; g⟨𝑏⟩ = λ{ {b = b} → trans 𝕥⟨𝕓⟩ (cong (𝕓𝕠𝕩 ∘ (𝕤𝕦𝕓 b)) (dext λ {τ} y → sym (𝕥𝕣𝕒𝕧-η≈id 𝕋ᴮ id refl))) }
+  ; g⟨𝑏⟩ = λ{ {Γ = Γ}{α = α}{𝔐 = 𝔐}{σ = σ}{ς}{b} → trans 𝕥⟨𝕓⟩ (cong 𝕓𝕠𝕩 (BF:Str.str-dist (𝕋 𝔐) 𝕤𝕦𝕓ᶜ (B₁ 𝕤𝕦𝕓 {α}{Γ} b) (λ {τ} z → σ z) ς)) }
   } where open ≡-Reasoning ; open Substitution
 
 -- Coalgebraic monoid structure on 𝕋

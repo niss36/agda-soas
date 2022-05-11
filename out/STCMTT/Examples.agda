@@ -48,16 +48,16 @@ module Examples where
   e4 = ƛ ƛ (var (old new))
 
   e5 : Λ ⁅⁆ ([ ∅ ] (N ↣ N)) ∅
-  e5 = box ∅ (ƛ var new)
+  e5 = box (∅ , N ↣ N , refl , ƛ var new)
 
   e6 : Λ ⁅⁆ ([ N ∙ ∅ ] N) ∅
-  e6 = box (N ∙ ∅) (var new)
+  e6 = box (N ∙ ∅ , N , refl , var new)
 
-  e7 : Λ ⁅⁆ N (([ ∅ ] N) ∙ ∅)
-  e7 = letbox (∅ , N , var new , mvar ↓ •)
-
-  e8 : Λ (⁅ ∅ ⊩ₙ [ (N ↣ N) ∙ ∅ ] N ⁆ ⁅⁆) N ∅
-  e8 = letbox ( (N ↣ N) ∙ ∅ , N , mvar ↓ • , mvar ↓ ((ƛ var new) ◂ •) )
+  -- e7 : Λ ⁅⁆ N (([ ∅ ] N) ∙ ∅)
+  -- e7 = letbox (∅ , N , var new , mvar ↓ •)
+  --
+  -- e8 : Λ (⁅ ∅ ⊩ₙ [ (N ↣ N) ∙ ∅ ] N ⁆ ⁅⁆) N ∅
+  -- e8 = letbox ( (N ↣ N) ∙ ∅ , N , mvar ↓ • , mvar ↓ ((ƛ var new) ◂ •) )
 
   em1 : Λ (⁅ ((N ↣ N) ∙ N ∙ ∅) ⊩ₙ N ⁆ ⁅⁆) N (N ∙ ∅)
   em1 = mvar ↓ ((ƛ var new) ◂ (var new ◂ •))
@@ -65,4 +65,4 @@ module Examples where
   em2 : Λ (⁅ N ∙ ∅ ⊩ₙ (N ↣ N) ⁆ ⁅ ((N ↣ N) ∙ N ∙ ∅) ⊩ₙ N ⁆ ⁅⁆) (N ↣ N) ∅
   em2 = ƛ mvar (↑ ↓) (mvar ↓ ((var new) ◂ •) ◂ (var new ◂ •))
 
-  _ : {! PP e8  !}
+  _ : {! PP e5  !}
