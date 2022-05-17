@@ -21,6 +21,15 @@ module _ (Ψ : Ctx) where
 
   open Functor KF public using () renaming (F₀ to K ; F₁ to K₁)
 
+  KF:Str : Strength KF
+  KF:Str = record
+    { str = λ 𝒫ᴮ 𝒳 x σ → x (Coalgₚ.η 𝒫ᴮ)
+    ; str-nat₁ = λ fᴮ⇒ h σ → cong h (sym (dext λ {x} v → Coalgₚ⇒.⟨η⟩ fᴮ⇒))
+    ; str-nat₂ = λ f h σ → refl
+    ; str-unit = λ 𝒳 h → refl
+    ; str-assoc = λ 𝒳 fᶜ h σ ς → cong h (sym (dext λ {x} v → Coalgebraic.f∘η fᶜ))
+    }
+
   -- Box
   δboxF : Functor 𝔽amiliesₛ 𝔽amiliesₛ
   δboxF = record { F₀ = λ 𝒳 τ Γ → 𝒳 ([ Ψ ] τ) Γ ; F₁ = λ f → f ; identity = refl ; homomorphism = refl ; F-resp-≈ = λ z → z }
