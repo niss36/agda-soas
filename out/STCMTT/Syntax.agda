@@ -26,7 +26,7 @@ module Λ:Terms where
     var  : (ℐ ᴷ) ⇾̣₂ Λ
     mvar : Π ⊩ α ∈ 𝔐 → Sub (Λ 𝔐) Π Γ → Λ 𝔐 α Γ
     box : (B ²) Λ ⇾̣₂ Λ
-    -- letbox : LB Λ ⇾̣₂ Λ
+    letbox : LB Λ ⇾̣₂ Λ
 
     _$_ : Λ 𝔐 (α ↣ β) Γ → Λ 𝔐 α Γ → Λ 𝔐 β Γ
     ƛ_  : Λ 𝔐 β (α ∙ Γ) → Λ 𝔐 (α ↣ β) Γ
@@ -41,9 +41,10 @@ module Λ:Terms where
     { 𝑎𝑙𝑔 = λ where
       (appₒ ⋮ a , b) → _$_ a b
       (lamₒ ⋮ a)     → ƛ_  a
-    ; 𝑣𝑎𝑟 = var ; 𝑚𝑣𝑎𝑟 = λ 𝔪 mε → mvar 𝔪 (tabulate mε)
+    ; 𝑣𝑎𝑟 = var
+    ; 𝑚𝑣𝑎𝑟 = λ 𝔪 mε → mvar 𝔪 (tabulate mε)
     ; 𝑏𝑜𝑥 = box
-    -- ; 𝑙𝑒𝑡𝑏𝑜𝑥 = letbox
+    ; 𝑙𝑒𝑡𝑏𝑜𝑥 = letbox
     }
 
   module Λᵃ = MetaAlg Λᵃ
@@ -59,7 +60,7 @@ module Λ:Terms where
     𝕤𝕖𝕞 (mvar 𝔪 mε) = 𝑚𝑣𝑎𝑟 𝔪 (𝕊 mε)
     𝕤𝕖𝕞 (var v) = 𝑣𝑎𝑟 v
     𝕤𝕖𝕞 (box (Ψ , α , eq , b)) = 𝑏𝑜𝑥 (Ψ , α , eq , 𝕤𝕖𝕞 b)
-    -- 𝕤𝕖𝕞 (letbox (Ψ , τ , fst , snd)) = 𝑙𝑒𝑡𝑏𝑜𝑥 ( Ψ , τ , 𝕤𝕖𝕞 fst , 𝕤𝕖𝕞 snd )
+    𝕤𝕖𝕞 (letbox (Ψ , τ , fst , snd)) = 𝑙𝑒𝑡𝑏𝑜𝑥 ( Ψ , τ , 𝕤𝕖𝕞 fst , 𝕤𝕖𝕞 snd )
 
     𝕤𝕖𝕞 (_$_ a b) = 𝑎𝑙𝑔 (appₒ ⋮ 𝕤𝕖𝕞 a , 𝕤𝕖𝕞 b)
     𝕤𝕖𝕞 (ƛ_  a)   = 𝑎𝑙𝑔 (lamₒ ⋮ 𝕤𝕖𝕞 a)
@@ -70,7 +71,7 @@ module Λ:Terms where
       ; ⟨𝑣𝑎𝑟⟩ = refl
       ; ⟨𝑚𝑣𝑎𝑟⟩ = λ{ {𝔪 = 𝔪}{mε} → cong (𝑚𝑣𝑎𝑟 𝔪) (dext (𝕊-tab mε)) }
       ; ⟨𝑏𝑜𝑥⟩ = refl
-      -- ; ⟨𝑙𝑒𝑡𝑏𝑜𝑥⟩ = refl
+      ; ⟨𝑙𝑒𝑡𝑏𝑜𝑥⟩ = refl
       }
       where
       open ≡-Reasoning
@@ -94,7 +95,7 @@ module Λ:Terms where
         = trans (sym ⟨𝑚𝑣𝑎𝑟⟩) (cong (g ∘ mvar 𝔪) (tab∘ix≈id mε))
       𝕤𝕖𝕞! (var v) = sym ⟨𝑣𝑎𝑟⟩
       𝕤𝕖𝕞! (box (Ψ , α , eq , b)) rewrite 𝕤𝕖𝕞! b = sym ⟨𝑏𝑜𝑥⟩
-      -- 𝕤𝕖𝕞! (letbox (Ψ , τ , fst , snd)) rewrite 𝕤𝕖𝕞! fst = trans (cong (λ x → 𝑙𝑒𝑡𝑏𝑜𝑥 (Ψ , τ , g fst , x)) (𝕤𝕖𝕞! snd)) (sym ⟨𝑙𝑒𝑡𝑏𝑜𝑥⟩)
+      𝕤𝕖𝕞! (letbox (Ψ , τ , fst , snd)) rewrite 𝕤𝕖𝕞! fst | 𝕤𝕖𝕞! snd = sym ⟨𝑙𝑒𝑡𝑏𝑜𝑥⟩
 
       𝕤𝕖𝕞! (_$_ a b) rewrite 𝕤𝕖𝕞! a | 𝕤𝕖𝕞! b = sym ⟨𝑎𝑙𝑔⟩
       𝕤𝕖𝕞! (ƛ_ a) rewrite 𝕤𝕖𝕞! a = sym ⟨𝑎𝑙𝑔⟩
@@ -116,4 +117,4 @@ open Syntax Λ:Syn public
 open Λ:Terms public
 open import SOAS.Families.Build public
 open import SOAS.Syntax.Shorthands [_]_ Λᵃ public
-open import SOAS.Metatheory [_]_ Λ:Syn public
+-- open import SOAS.Metatheory [_]_ Λ:Syn public

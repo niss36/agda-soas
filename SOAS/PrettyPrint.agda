@@ -190,8 +190,7 @@ module _ where
       ; 𝑣𝑎𝑟 = ppVar
       ; 𝑚𝑣𝑎𝑟 = ppMvar
       ; 𝑏𝑜𝑥 = ppBox
-      -- ; 𝑙𝑒𝑡𝑏𝑜𝑥 = ppLetbox
-      --λ { (Ψ , α , (fst , fm , fn) , (snd , sm , sn)) → "letbox(" ++ fst ++ ", " ++ "𝔪" ++ (showNat sm) ++ ": " ++ (showCtx sn Ψ) ++ "⊩" ++ (showT sn α) ++ ". " ++ snd ++ ")" , fm Data.Nat.⊔ (suc sm) , fn Data.Nat.⊔ sn }
+      ; 𝑙𝑒𝑡𝑏𝑜𝑥 = λ {𝔐}{τ}{Γ} → ppLetbox {𝔐}{τ}{Γ}
       }
 
   open import SOAS.Abstract.ExpStrength
