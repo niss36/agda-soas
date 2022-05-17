@@ -13,16 +13,15 @@ open import SOAS.Context {ΛT}
 open import SOAS.Variable {ΛT}
 open import SOAS.Families.Core {ΛT}
 
-showT : ℕ → ΛT → String
-showCtx : ℕ → Ctx → String
+showT : ΛT → String
+showCtx : {A : Set} → (A → A) → (A → String → String) → A → Ctx → String
+showCtx next f a ∅ = "∅"
+showCtx next f a (α ∙ ∅) = f a (showT α)
+showCtx next f a (α ∙ β ∙ Γ) = showCtx next f (next a) (β ∙ Γ) ^^ ", " ^^ f a (showT α)
 
-showT _ N = "N"
-showT n (α ↣ β) = (showT n α) ^^ "↣" ^^ (showT n β)
-showT n ([ Ψ ] τ) = "[" ^^ (showCtx n Ψ) ^^ "]" ^^ (showT n τ)
-
-showCtx n ∅ = "∅"
-showCtx n (α ∙ ∅) = "x" ^^ (showNat n) ^^ ": " ^^ (showT (suc n) α)
-showCtx n (α ∙ β ∙ Γ) = "x" ^^ (showNat n) ^^ ": " ^^ (showT (suc n) α) ^^ ", " ^^ (showCtx (suc n) (β ∙ Γ))
+showT N = "N"
+showT (α ↣ β) = showT α ^^ "↣" ^^ showT β
+showT ([ Ψ ] τ) = "[" ^^ (showCtx id (λ _ → id) "" Ψ) ^^ "]" ^^ showT τ
 
 showOp : Λₒ → String
 showOp appₒ = "app"
@@ -59,10 +58,16 @@ module Examples where
   -- e8 : Λ (⁅ ∅ ⊩ₙ [ (N ↣ N) ∙ ∅ ] N ⁆ ⁅⁆) N ∅
   -- e8 = letbox ( (N ↣ N) ∙ ∅ , N , mvar ↓ • , mvar ↓ ((ƛ var new) ◂ •) )
 
+  e9 : Λ ⁅⁆ N (N ∙ (N ↣ N) ∙ ∅)
+  e9 = (ƛ (ƛ var new $ var (old (old new)) ) $ var (old (old new)) ) $ (var (old new) $ var new)
+
+  e10 : Λ ⁅⁆ N ((N ↣ N) ∙ N ∙ ∅)
+  e10 = (var new) $ ((ƛ var new) $ var (old new))
+
   em1 : Λ (⁅ ((N ↣ N) ∙ N ∙ ∅) ⊩ₙ N ⁆ ⁅⁆) N (N ∙ ∅)
   em1 = mvar ↓ ((ƛ var new) ◂ (var new ◂ •))
 
   em2 : Λ (⁅ N ∙ ∅ ⊩ₙ (N ↣ N) ⁆ ⁅ ((N ↣ N) ∙ N ∙ ∅) ⊩ₙ N ⁆ ⁅⁆) (N ↣ N) ∅
   em2 = ƛ mvar (↑ ↓) (mvar ↓ ((var new) ◂ •) ◂ (var new ◂ •))
 
-  _ : {! PP e5  !}
+  _ : {! PP e10  !}
