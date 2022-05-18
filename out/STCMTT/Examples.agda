@@ -17,7 +17,7 @@ showT : ΛT → String
 showCtx : {A : Set} → (A → A) → (A → String → String) → A → Ctx → String
 showCtx next f a ∅ = "∅"
 showCtx next f a (α ∙ ∅) = f a (showT α)
-showCtx next f a (α ∙ β ∙ Γ) = showCtx next f (next a) (β ∙ Γ) ^^ ", " ^^ f a (showT α)
+showCtx next f a (α ∙ β ∙ Γ) = f a (showT α) ^^ ", " ^^ showCtx next f (next a) (β ∙ Γ)
 
 showT N = "N"
 showT (α ↣ β) = showT α ^^ "↣" ^^ showT β
@@ -64,10 +64,13 @@ module Examples where
   e10 : Λ ⁅⁆ N ((N ↣ N) ∙ N ∙ ∅)
   e10 = (var new) $ ((ƛ var new) $ var (old new))
 
+  e11 : Λ ⁅⁆ ([ (N ↣ N) ∙ N ∙ ∅ ] N) ∅
+  e11 = box ((N ↣ N) ∙ N ∙ ∅ , N , refl , (var new) $ (var (old new)))
+
   em1 : Λ (⁅ ((N ↣ N) ∙ N ∙ ∅) ⊩ₙ N ⁆ ⁅⁆) N (N ∙ ∅)
   em1 = mvar ↓ ((ƛ var new) ◂ (var new ◂ •))
 
   em2 : Λ (⁅ N ∙ ∅ ⊩ₙ (N ↣ N) ⁆ ⁅ ((N ↣ N) ∙ N ∙ ∅) ⊩ₙ N ⁆ ⁅⁆) (N ↣ N) ∅
   em2 = ƛ mvar (↑ ↓) (mvar ↓ ((var new) ◂ •) ◂ (var new ◂ •))
 
-  _ : {! PP e8  !}
+  _ : {! PP e11  !}

@@ -40,10 +40,11 @@ len (α ∙ Γ) = suc (len Γ)
 showVar : ℕ → String → String
 showVar n t = "x" ++ (showNat n) ++ ": " ++ t
 
+-- Next variable name -> Ctx -> whether to show empty Ctx -> whether to add a ". " -> String
 showCtxBinder : ℕ → Ctx → Bool → Bool → String
 showCtxBinder n ∅ false _ = ""
 showCtxBinder n ∅ true b = withDot b "∅"
-showCtxBinder n (α ∙ Γ) _ b = withDot b (showCtx pred showVar (n + len Γ) (α ∙ Γ))
+showCtxBinder n (α ∙ Γ) _ b = withDot b (showCtx suc showVar n (α ∙ Γ))
 
 -- Operations on metavariable contexts
 
@@ -62,10 +63,11 @@ showMCtx next f a ⁅⁆ = "⁅⁆"
 showMCtx next f a ⁅ Π ⊩ₙ τ ⁆̣ = f a (showMT Π τ)
 showMCtx next f a (⁅ Π ⊩ₙ τ ⁆ (⁅ Π₁ ⊩ₙ τ₁ ⁆ 𝔐)) = (showMCtx next f (next a) (⁅ Π₁ ⊩ₙ τ₁ ⁆ 𝔐)) ++ ", " ++ f a (showMT Π τ)
 
+-- Next metavariable name -> MCtx -> whether to show empty MCtx -> whether to add a ". " -> String
 showMCtxBinder : ℕ → MCtx → Bool → Bool → String
 showMCtxBinder m ⁅⁆ false _ = ""
 showMCtxBinder m ⁅⁆ true b = withDot b "⁅⁆"
-showMCtxBinder m (⁅ Π ⊩ₙ τ ⁆ 𝔐) _ b = withDot b (showMCtx pred showMvar (m + mlen 𝔐) (⁅ Π ⊩ₙ τ ⁆ 𝔐))
+showMCtxBinder m (⁅ Π ⊩ₙ τ ⁆ 𝔐) _ b = withDot b (showMCtx suc showMvar m (⁅ Π ⊩ₙ τ ⁆ 𝔐))
 
 -- Pretty printing environment:
 -- ( m distinct metavariables* , maps from metavariables to integers ,
@@ -97,7 +99,7 @@ infixr 20 _●,_
 
 bindAux : {𝔐 : MCtx}{Γ : Ctx}(Θ : Ctx) → Env 𝔐 Γ → Env 𝔐 (Θ ∔ Γ)
 bindAux ∅ e = e
-bindAux (α ∙ Θ) e = let (m , ρ , n , ϱ) = bindAux Θ e in (m , ρ , suc n , λ{ new → n ; (old v) → ϱ v })
+bindAux (α ∙ Θ) e = let (m , ρ , n , ϱ) = bindAux Θ e in (m , ρ , pred n , λ{ new → pred n ; (old v) → ϱ v })
 
 unbindAux : {𝔐 : MCtx}{Γ : Ctx}(Θ : Ctx) → Env 𝔐 (Θ ∔ Γ) → Env 𝔐 Γ
 unbindAux ∅ e = e
@@ -113,7 +115,7 @@ infixl 20 _m∔_
 
 mBindAux : {𝔐 : MCtx}{Γ : Ctx}(𝔑 : MCtx) → Env 𝔐 Γ → Env (𝔑 m∔ 𝔐) Γ
 mBindAux ⁅⁆ e = e
-mBindAux (⁅ Π ⊩ₙ τ ⁆ 𝔑) e = let (m , ρ , n , ϱ) = mBindAux 𝔑 e in (suc m , (λ{ ↓ → m ; (↑ 𝔪) → ρ 𝔪 }) , n , ϱ)
+mBindAux (⁅ Π ⊩ₙ τ ⁆ 𝔑) e = let (m , ρ , n , ϱ) = mBindAux 𝔑 e in (pred m , (λ{ ↓ → pred m ; (↑ 𝔪) → ρ 𝔪 }) , n , ϱ)
 
 mUnbindAux : {𝔐 : MCtx}{Γ : Ctx}(𝔑 : MCtx) → Env (𝔑 m∔ 𝔐) Γ → Env 𝔐 Γ
 mUnbindAux ⁅⁆ e = e
@@ -130,7 +132,7 @@ module _ where
   ppAlgArgs : {𝔐 : MCtx}{Γ : Ctx} → (op : O) → (a : List (Ctx × T)) → Arg a (𝓟𝓟 𝔐) Γ → 𝓟𝓟 𝔐 (Sort op) Γ
   ppAlgArgs {𝔐}{Γ} op a args = rec a args
     where bind : (Θ : Ctx) → Env 𝔐 Γ → (String × Env 𝔐 (Θ ∔ Γ))
-          bind Θ (m , ρ , n , ϱ) = (showCtxBinder n Θ false true , bindAux Θ (m , ρ , n , ϱ))
+          bind Θ (m , ρ , n , ϱ) = (showCtxBinder n Θ false true , bindAux Θ (m , ρ , n + len Θ , ϱ))
 
           unbind : (Θ : Ctx) → Env 𝔐 (Θ ∔ Γ) → (String × Env 𝔐 Γ)
           unbind Θ e = ("", unbindAux Θ e)
@@ -167,10 +169,10 @@ module _ where
   ppBox {𝔐}{τ}{Γ} (Ψ , α , eq , f) e = ((ret "box(") ● replace ● f ● remember e ● (ret ")")) e
     where replaceAux : (Ψ : Ctx) → Env 𝔐 Γ → Env 𝔐 Ψ
           replaceAux ∅ (m , ρ , n , ϱ) = (m , ρ , n , λ())
-          replaceAux (α ∙ Ψ) e = let (m , ρ , n , ϱ) = replaceAux Ψ e in (m , ρ , suc n , λ{ new → n ; (old v) → ϱ v })
+          replaceAux (α ∙ Ψ) e = let (m , ρ , n , ϱ) = replaceAux Ψ e in (m , ρ , pred n , λ{ new → pred n ; (old v) → ϱ v })
 
           replace : Env 𝔐 Γ → (String × Env 𝔐 Ψ)
-          replace (m , ρ , n , ϱ) = showCtxBinder n Ψ true true , replaceAux Ψ (m , ρ , n , ϱ)
+          replace (m , ρ , n , ϱ) = showCtxBinder n Ψ true true , replaceAux Ψ (m , ρ , n + len Ψ , ϱ)
 
           remember : Env 𝔐 Γ → Env 𝔐 Ψ → (String × Env 𝔐 Γ)
           remember (_ , _ , _ , ϱ) (m , ρ , n , _) = ("", m , ρ , n , ϱ)
@@ -179,7 +181,7 @@ module _ where
   ppLetbox : {𝔐 : MCtx}{τ : T}{Γ : Ctx} → LB 𝓟𝓟 𝔐 τ Γ → 𝓟𝓟 𝔐 τ Γ
   ppLetbox {𝔐}{τ}{Γ} (Ψ , α , f , g) = (ret "letbox(") ● f ●, bind ● g ● unbind ● (ret ")")
     where bind : Env 𝔐 Γ → (String × Env (⁅ Ψ ⊩ₙ α ⁆ 𝔐) Γ)
-          bind (m , ρ , n , ϱ) = showMCtxBinder m ⁅ Ψ ⊩ₙ α ⁆̣ false true , mBindAux ⁅ Ψ ⊩ₙ α ⁆̣ (m , ρ , n , ϱ)
+          bind (m , ρ , n , ϱ) = showMCtxBinder m ⁅ Ψ ⊩ₙ α ⁆̣ false true , mBindAux ⁅ Ψ ⊩ₙ α ⁆̣ (m + (mlen ⁅ Ψ ⊩ₙ α ⁆̣) , ρ , n , ϱ)
 
           unbind : Env (⁅ Ψ ⊩ₙ α ⁆ 𝔐) Γ → (String × Env 𝔐 Γ)
           unbind e = "", mUnbindAux ⁅ Ψ ⊩ₙ α ⁆̣ e
@@ -207,14 +209,12 @@ module _ where
 
   PP : 𝕋 ⇾̣₂ 𝓢
   PP {𝔐}{τ}{Γ} t =
-    let (s , _) = PP' t (m , ρ {𝔐} , n , ϱ {Γ}) in (showMCtxBinder ℕ.zero 𝔐 true false) ++ "; " ++ (showCtxBinder ℕ.zero Γ true false) ++ " ⊢ " ++ s ++ " : " ++ showT τ
-    where m = mlen 𝔐
-          n = len Γ
-
-          ρ : {𝔑 : MCtx}{Ψ : Ctx}{α : T} → Ψ ⊩ α ∈ 𝔑 → ℕ
-          ρ {𝔑} ↓ = pred m
-          ρ {⁅ Γ' ⊩ₙ τ' ⁆ 𝔑} (↑ 𝔪) = pred (ρ {𝔑} 𝔪)
+    let (s , _) = PP' t (mlen 𝔐 , ρ {𝔐} , len Γ , ϱ {Γ})
+    in (showMCtxBinder ℕ.zero 𝔐 true false) ++ "; " ++ (showCtxBinder ℕ.zero Γ true false) ++ " ⊢ " ++ s ++ " : " ++ showT τ
+    where ρ : {𝔑 : MCtx}{Ψ : Ctx}{α : T} → Ψ ⊩ α ∈ 𝔑 → ℕ
+          ρ {𝔑} ↓ = ℕ.zero
+          ρ {⁅ Γ' ⊩ₙ τ' ⁆ 𝔑} (↑ 𝔪) = suc (ρ {𝔑} 𝔪)
 
           ϱ : {Δ : Ctx}{α : T} → ℐ α Δ → ℕ
-          ϱ {Δ} new = pred n
-          ϱ {β ∙ Δ} (old v) = pred (ϱ {Δ} v)
+          ϱ {Δ} new = ℕ.zero
+          ϱ {β ∙ Δ} (old v) = suc (ϱ {Δ} v)
